@@ -24,7 +24,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - uses: actions/cache/restore@v4
+        with:
+          path: estado
+          key: estado-${{ github.run_id }}
+          restore-keys: estado-
       - run: npm run actualizar
+      - uses: actions/cache/save@v4
+        with:
+          path: estado
+          key: estado-${{ github.run_id }}
       - name: Commit de datos
         run: |
           git config user.name "github-actions[bot]"

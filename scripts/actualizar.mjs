@@ -13,7 +13,7 @@ const { propia, tiendas } = leerJson('../config/tiendas.json');
 const ediciones = leerJson('../config/ediciones.json');
 
 const DATOS = 'public/data';
-const ULTIMOS = 'public/data/ultimos';
+const ULTIMOS = 'estado/ultimos';
 const HISTORIAL = 'historial';
 const ahora = new Date().toISOString();
 
