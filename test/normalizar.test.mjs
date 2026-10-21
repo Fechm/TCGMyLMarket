@@ -57,6 +57,14 @@ const casos = [
   ['HOMERO &#8211; LEGENDARIO', 'homero', 'legendaria', ['legendario']],
   ['Duhan (LPE4 - LEGENDARIA)', 'duhan', 'legendaria', ['lpe4', 'legendaria']],
   ['Escarabeo - Legendaria - Aniversario Ra', 'escarabeo', 'legendaria', ['legendaria', 'aniversario ra']],
+  ['Lautaro (LPE3.0 - UR)', 'lautaro', 'ultra-real', ['lpe3 0', 'ur']],
+  ['Marco Antonio (Helénica Aniv - UR)', 'marco antonio', 'ultra-real', ['helenica aniv', 'ur']],
+  ['Gebre Mesqel – Ultra Real', 'gebre mesqel', 'ultra-real', ['ultra real']],
+  ['Thor UR', 'thor', 'ultra-real', []],
+  ['Cuchulain Premium', 'cuchulain', 'ultra-real', []],
+  ['Ur Nammu', 'ur nammu', 'normal', []],
+  ['TORO APIS - PREMIUM - ANIVERSARIO RA', 'toro apis', 'normal', ['premium', 'aniversario ra']],
+  ['Ra (LBPB25 – Foil lluvia premium)', 'ra', 'foil', ['lbpb25', 'foil lluvia premium']],
 ];
 
 for (const [nombre, nombreClave, variante, codigos] of casos) {
