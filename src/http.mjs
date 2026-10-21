@@ -21,8 +21,10 @@ export function crearCliente({
           headers: { 'User-Agent': USER_AGENT },
           signal: AbortSignal.timeout(timeoutMs),
         });
-        if (respuesta.status >= 500 && intento < intentos) {
-          await esperar(pausaReintentoMs * intento);
+        if ((respuesta.status >= 500 || respuesta.status === 429) && intento < intentos) {
+          const segundos = Number(respuesta.headers.get('retry-after'));
+          const pedida = Number.isFinite(segundos) ? segundos * 1000 : 0;
+          await esperar(Math.min(Math.max(pedida, pausaReintentoMs * intento), 60000));
           continue;
         }
         if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status} ${url}`);

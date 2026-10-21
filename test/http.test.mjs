@@ -31,6 +31,20 @@ test('reintenta ante un 500 y luego responde', async () => {
   assert.equal(llamadas, 2);
 });
 
+test('reintenta ante un 429 respetando Retry-After', async () => {
+  let llamadas = 0;
+  const cliente = crearCliente({
+    intervaloMs: 0,
+    pausaReintentoMs: 1,
+    fetchImpl: async () =>
+      ++llamadas === 1
+        ? new Response('x', { status: 429, headers: { 'Retry-After': '0' } })
+        : respuesta(200, 'hola'),
+  });
+  assert.equal(await cliente.texto('https://x.cl'), 'hola');
+  assert.equal(llamadas, 2);
+});
+
 test('no reintenta un 404 y lanza error', async () => {
   let llamadas = 0;
   const cliente = crearCliente({
