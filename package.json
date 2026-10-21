@@ -1,0 +1,15 @@
+{
+  "name": "tcg-myl-market",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "actualizar": "node scripts/actualizar.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0"
+  }
+}
