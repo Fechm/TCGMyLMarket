@@ -38,7 +38,7 @@ test('pagina por categoría, deduplica y combina pistas y formato', async () => 
   assert.deepEqual(listados.map((l) => l.id).sort(), ['1', '2', '3']);
   assert.deepEqual(listados.find((l) => l.id === '1'), {
     tienda: 'laira', id: '1', nombre: 'Carta 1', precio: 2500, stock: true,
-    url: 'https://laira.cl/producto/1/', imagen: 't.jpg', pistas: ['cat:266', 'cat:267'], formato: 'pe',
+    url: 'https://laira.cl/producto/1/', imagen: 'https://laira.cl/t.jpg', pistas: ['cat:266', 'cat:267'], formato: 'pe',
   });
   const dos = listados.find((l) => l.id === '2');
   assert.equal(dos.nombre, 'Dub – Sar FOIL');
@@ -66,4 +66,14 @@ test('una página vacía corta la paginación', async () => {
   const listados = await leer({ ...config, categorias: [{ id: 266, formato: 'pe' }] }, cliente);
   assert.deepEqual(listados, []);
   assert.equal(cliente.pedidas.length, 1);
+});
+
+test('descarta permalink e imagen con esquemas distintos de http y https', async () => {
+  const cliente = clienteFalso({
+    [`${base}?category=266&per_page=100&page=1`]: {
+      total: 1, datos: [producto(5, { permalink: 'javascript:alert(1)', images: [{ src: 'javascript:alert(2)' }] })],
+    },
+  });
+  const [listado] = await leer({ ...config, categorias: [{ id: 266, formato: 'pe' }] }, cliente);
+  assert.deepEqual([listado.url, listado.imagen], [null, null]);
 });

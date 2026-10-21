@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import { urlSegura } from '../url.mjs';
 
 export function parsearListado(html, base) {
   const $ = cheerio.load(html);
@@ -13,8 +14,8 @@ export function parsearListado(html, base) {
     return {
       id: bloque.attr('data-product-id'),
       nombre: enlace.text().replace(/\s+/g, ' ').trim(),
-      url: new URL(enlace.attr('href'), base).href,
-      imagen: bloque.find('img.product-block__image').attr('src') ?? null,
+      url: urlSegura(enlace.attr('href'), base),
+      imagen: urlSegura(bloque.find('img.product-block__image').attr('src'), base),
       precio,
       stock: !agotado && comprable && precio > 0,
     };

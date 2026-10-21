@@ -114,3 +114,9 @@ test('leer recorre subcategorías con sus páginas y suma las pistas de las cate
   assert.deepEqual(pistas('950'), [`ruta:${padre}`, `ruta:${padre}/promocionales`, `ruta:${padre}/promocionales/foil`]);
   assert.ok(listados.every((l) => l.formato === 'imperio'));
 });
+
+test('parsearListado descarta url e imagen con esquemas distintos de http y https', () => {
+  const html = '<article class="product-block" data-product-id="7"><a class="product-block__name" href="javascript:alert(1)">A</a><img class="product-block__image" src="javascript:alert(2)"><div class="product-block__price">$1.000</div><form class="product-block__form"></form></article>';
+  const [producto] = parsearListado(html, 'https://mylserena.cl').productos;
+  assert.deepEqual([producto.url, producto.imagen], [null, null]);
+});

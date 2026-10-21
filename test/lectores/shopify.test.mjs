@@ -56,3 +56,11 @@ test('precio sobre el máximo cuenta como sin stock y precio 0', async () => {
   assert.equal(PRECIO_MAXIMO, 1000000);
   assert.deepEqual([listado.precio, listado.stock], [0, false]);
 });
+
+test('descarta imagen con esquemas distintos de http y https', async () => {
+  const cliente = {
+    json: async () => ({ datos: { products: [{ id: 2, title: 'A', handle: 'a', tags: [], variants: [{ available: true, price: '100' }], images: [{ src: 'javascript:alert(1)' }] }] } }),
+  };
+  const [listado] = await leer({ ...config, url: 'javascript:alert(1)//' }, cliente);
+  assert.deepEqual([listado.url, listado.imagen], [null, null]);
+});

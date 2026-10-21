@@ -3,6 +3,7 @@ const pesos = (v) => (v === null || v === undefined ? '—' : clp.format(v));
 const porcentaje = (v) => (v === null || v === undefined ? '—' : `${v > 0 ? '+' : ''}${Math.round(v * 100)}%`);
 const $ = (selector) => document.querySelector(selector);
 const vacio = (v) => v === null || v === undefined;
+const esWeb = (v) => typeof v === 'string' && /^https?:\/\//i.test(v);
 const MAXIMO_FILAS = 500;
 
 const cache = new Map();
@@ -149,16 +150,20 @@ function grafico(puntos) {
     <p class="leyenda nota"><span class="market">■ Market</span> <span class="propia">■ La Ira</span> · ${puntos[0][0]} a ${puntos.at(-1)[0]}</p>`;
 }
 
+function enlaceTienda(url, nombre) {
+  return esWeb(url) ? `<a href="${escapar(url)}" target="_blank" rel="noopener">${escapar(nombre)}</a>` : escapar(nombre);
+}
+
 async function abrirDetalle(f) {
   const series = await cargar(`series-${f.formato}.json`);
   const tiendas = [...f.tiendas].sort((a, b) => (a.precio ?? Number.MAX_SAFE_INTEGER) - (b.precio ?? Number.MAX_SAFE_INTEGER));
   $('#detalle-contenido').innerHTML = `
-    ${f.imagen ? `<img src="${escapar(f.imagen)}" alt="" loading="lazy">` : ''}
+    ${esWeb(f.imagen) ? `<img src="${escapar(f.imagen)}" alt="" loading="lazy">` : ''}
     <h2>${escapar(f.nombre)}</h2>
     <p class="nota">${subtitulo(f)}</p>
     <p>Market: <strong>${celdaMarket(f)}</strong> · Sugerido: <strong>${pesos(f.sugerido)}</strong></p>
     <table><thead><tr><th>Tienda</th><th>Precio</th><th>Stock</th></tr></thead><tbody>
-      ${tiendas.map((t) => `<tr><td><a href="${escapar(t.url)}" target="_blank" rel="noopener">${escapar(nombreTienda(t.tienda))}</a></td>
+      ${tiendas.map((t) => `<tr><td>${enlaceTienda(t.url, nombreTienda(t.tienda))}</td>
         <td>${t.ambiguo ? 'varios precios' : pesos(t.precio)}</td><td>${t.stock ? 'sí' : 'no'}</td></tr>`).join('')}
     </tbody></table>
     ${grafico(series[f.clave])}`;
@@ -168,7 +173,7 @@ async function abrirDetalle(f) {
 function renderPie() {
   const tiendas = meta.tiendas.map((t) => {
     const viejo = t.reutilizado ? ` <em>(datos del ${t.ultimaLectura ? new Date(t.ultimaLectura).toLocaleDateString('es-CL') : '—'})</em>` : '';
-    return `<a href="${escapar(t.url)}" target="_blank" rel="noopener">${escapar(t.nombre)}</a>: ${t.listados} (${t.conStock} con stock)${viejo}`;
+    return `${enlaceTienda(t.url, t.nombre)}: ${t.listados} (${t.conStock} con stock)${viejo}`;
   });
   $('#pie').innerHTML = `Actualizado ${new Date(meta.generado).toLocaleString('es-CL')}. ${tiendas.join(' · ')}`;
 }

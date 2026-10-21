@@ -1,3 +1,5 @@
+import { urlSegura } from '../url.mjs';
+
 export const PRECIO_MAXIMO = 1000000;
 
 export async function leer(config, cliente) {
@@ -18,8 +20,8 @@ export async function leer(config, cliente) {
         nombre: producto.title,
         precio,
         stock: disponible && precio > 0,
-        url: `${config.url}/products/${producto.handle}`,
-        imagen: producto.images?.[0]?.src ?? null,
+        url: urlSegura(`${config.url}/products/${producto.handle}`),
+        imagen: urlSegura(producto.images?.[0]?.src, config.url),
         pistas: (producto.tags ?? []).filter((t) => !ignorados.has(t)).map((t) => `tag:${t}`),
         formato: null,
       });
