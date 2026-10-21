@@ -9,9 +9,9 @@ export function mediana(valores) {
 
 export function comparar(precio, market) {
   if (market === null || !precio) return { diferencia: null, estado: null };
-  const diferencia = Math.round(((precio - market) / market) * 1000) / 1000;
-  const estado = diferencia <= -UMBRAL ? 'bajo' : diferencia >= UMBRAL ? 'sobre' : 'en-linea';
-  return { diferencia, estado };
+  const exacta = (precio - market) / market;
+  const estado = exacta <= -UMBRAL ? 'bajo' : exacta >= UMBRAL ? 'sobre' : 'en-linea';
+  return { diferencia: Math.round(exacta * 1000) / 1000, estado };
 }
 
 function preciosPorTienda(listados) {

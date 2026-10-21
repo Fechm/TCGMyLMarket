@@ -21,6 +21,8 @@ test('comparar aplica el umbral de 15%', () => {
   assert.deepEqual(comparar(850, 1000), { diferencia: -0.15, estado: 'bajo' });
   assert.deepEqual(comparar(1149, 1000), { diferencia: 0.149, estado: 'en-linea' });
   assert.deepEqual(comparar(1150, 1000), { diferencia: 0.15, estado: 'sobre' });
+  assert.equal(comparar(8504, 10000).estado, 'en-linea');
+  assert.equal(comparar(11496, 10000).estado, 'en-linea');
   assert.deepEqual(comparar(1000, null), { diferencia: null, estado: null });
   assert.deepEqual(comparar(0, 1000), { diferencia: null, estado: null });
 });

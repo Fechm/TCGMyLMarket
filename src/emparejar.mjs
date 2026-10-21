@@ -31,8 +31,7 @@ function resolverEdicion(indice, tienda, pistas, formato) {
     for (const id of mapa.get(normal) ?? []) (normal.startsWith('cod:') ? debiles : fuertes).add(id);
   }
   const validas = (ids) => [...ids].filter((id) => !formato || indice.ediciones[id].formato === formato);
-  const fuertesValidas = validas(fuertes);
-  const candidatas = fuertesValidas.length ? fuertesValidas : validas(debiles);
+  const candidatas = validas(fuertes.size ? fuertes : debiles);
   if (candidatas.length === 1) return { edicion: candidatas[0] };
   return { motivo: candidatas.length ? 'ambigua' : 'sin-alias' };
 }

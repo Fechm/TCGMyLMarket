@@ -52,6 +52,15 @@ test('la pista fuerte gana a la débil', () => {
   assert.equal(r.clave, 'paladin harker|dracula-rey-vampiro|secreta');
 });
 
+test('si una pista fuerte calzó, las débiles se ignoran aunque el formato descarte las fuertes', () => {
+  const r = unico(crearIndice(ediciones), {
+    nombre: 'Carta (LPB 4.0)',
+    pistas: ['ruta:singles-imperio/onyria'],
+    formato: 'pb',
+  });
+  assert.equal(r.motivo, 'sin-alias');
+});
+
 test('sin pista fuerte usa la débil', () => {
   const r = unico(crearIndice(ediciones), { nombre: 'Paladín Harker (Drácula - Secreta)', pistas: ['ruta:singles-pb-1'], formato: 'pb' });
   assert.equal(r.clave, 'paladin harker|dracula-pb|secreta');
