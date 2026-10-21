@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { mediana } from './calcular.mjs';
 
 export const PROPORCION_MINIMA = 0.5;
-export const PRECIO_MINIMO = 100;
+export const PRECIO_MINIMO = 50;
 
 export function validar(listados, anteriores) {
   if (!listados.length) return 'sin listados';
