@@ -67,11 +67,12 @@ export function calcular({ emparejados, sinEmparejar, ediciones, propia }) {
     .filter((l) => l.tienda === propia)
     .map((l) => {
       const r = porClave.get(l.clave);
+      const { diferencia, estado } = comparar(l.precio, r.market);
       return {
         id: l.id, nombre: l.nombre, url: l.url, imagen: l.imagen, precio: l.precio, stock: l.stock,
         clave: l.clave, edicion: l.edicion, formato: ediciones[l.edicion].formato, variante: l.variante,
         market: r.market, referencia: r.referencia, min: r.min, max: r.max, nTiendas: r.nTiendas,
-        sugerido: r.sugerido, tiendas: r.tiendas, ...comparar(l.precio, r.market),
+        sugerido: r.sugerido, tiendas: r.tiendas, diferencia, estado: l.stock ? estado : null,
       };
     });
 

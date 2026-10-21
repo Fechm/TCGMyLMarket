@@ -69,12 +69,16 @@ test('calcular arma el comparativo y las brechas ordenadas', () => {
     l('mylserena', 'b|ed1|normal', 5000), l('pandora', 'b|ed1|normal', 7000),
     l('mylserena', 'c|nueva|normal', 3000),
     l('pandora', 'd|ed1|foil', 2000),
-    l('laira', 'e|ed1|normal', 1000, false), l('mylserena', 'e|ed1|normal', 1200),
+    l('laira', 'e|ed1|normal', 1000, false), l('mylserena', 'e|ed1|normal', 2000), l('pandora', 'e|ed1|normal', 2000),
   ];
   const sinEmparejar = [{ tienda: 'laira', nombreClave: 'd', variante: 'foil', stock: true }];
   const { comparativo, brechas } = calcular({ emparejados, sinEmparejar, ediciones, propia: 'laira' });
 
   assert.equal(comparativo.length, 2);
+  const e = comparativo.find((c) => c.clave === 'e|ed1|normal');
+  assert.equal(e.market, 2000);
+  assert.equal(e.diferencia, -0.5);
+  assert.equal(e.estado, null);
   const a = comparativo.find((c) => c.clave === 'a|ed1|normal');
   assert.equal(a.market, 1000);
   assert.equal(a.diferencia, -0.2);
@@ -82,7 +86,7 @@ test('calcular arma el comparativo y las brechas ordenadas', () => {
   assert.equal(a.formato, 'pb');
   assert.equal(a.tiendas.length, 3);
 
-  assert.deepEqual(brechas.map((b) => b.clave), ['c|nueva|normal', 'b|ed1|normal', 'd|ed1|foil', 'e|ed1|normal']);
+  assert.deepEqual(brechas.map((b) => b.clave), ['c|nueva|normal', 'b|ed1|normal', 'e|ed1|normal', 'd|ed1|foil']);
   assert.equal(brechas[0].reciente, true);
   assert.equal(brechas[0].formato, 'imperio');
   assert.equal(brechas.find((b) => b.clave === 'd|ed1|foil').otraVersion, true);
