@@ -6,6 +6,14 @@ test('decodificar entidades numéricas y con nombre', () => {
   assert.equal(decodificar('Dub &#8211; Sar &amp; Co&nbsp;X'), 'Dub – Sar & Co X');
 });
 
+test('decodificar entidades acentuadas, doble codificación y numéricas inválidas', () => {
+  assert.equal(decodificar('Ma&ntilde;ana'), 'Mañana');
+  assert.equal(decodificar('&Ntilde;'), 'Ñ');
+  assert.equal(decodificar('Dub &amp;#8211; Sar'), 'Dub – Sar');
+  assert.equal(decodificar('X &#9999999; Y'), 'X &#9999999; Y');
+  assert.equal(decodificar('X &#xFFFFFFF; Y'), 'X &#xFFFFFFF; Y');
+});
+
 test('plano quita tildes, baja a minúsculas y unifica guiones', () => {
   assert.equal(plano('  Ñandú   Dorado – SP '), 'nandu dorado - sp');
   assert.equal(plano('Valor\u0096Real'), 'valor-real');
@@ -30,6 +38,8 @@ const casos = [
   ['Figuras Negras (LBPB24 - Ultra Secreta)', 'figuras negras', 'ultra-secreta', ['lbpb24', 'ultra secreta']],
   ['Guerrero Mixteco FOIL', 'guerrero mixteco', 'foil', []],
   ['Visión Heroica sin foil', 'vision heroica', 'normal', []],
+  ['Carta sin-foil', 'carta', 'normal', []],
+  ['Carta no foil', 'carta', 'normal', []],
   ['FELIPE II &#8211; SP', 'felipe ii', 'sp', ['sp']],
   ['RAYOS-SP', 'rayos', 'sp', []],
   ['(XS-108-128) Ishkur Bestial – Vasallo', 'ishkur bestial', 'normal', ['xs', 'vasallo']],

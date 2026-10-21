@@ -1,7 +1,16 @@
-const ENTIDADES = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ' };
+const ENTIDADES = {
+  amp: '&', quot: '"', apos: "'", lt: '<', gt: '>', nbsp: ' ',
+  aacute: 'á', eacute: 'é', iacute: 'í', oacute: 'ó', uacute: 'ú',
+  Aacute: 'Á', Eacute: 'É', Iacute: 'Í', Oacute: 'Ó', Uacute: 'Ú',
+  ntilde: 'ñ', Ntilde: 'Ñ', uuml: 'ü', Uuml: 'Ü',
+  ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', hellip: '…',
+};
+
+const desdeCodigo = (entidad, codigo) =>
+  Number.isInteger(codigo) && codigo >= 0 && codigo <= 0x10ffff ? String.fromCodePoint(codigo) : entidad;
 
 const SUFIJOS = [
-  'ultra secreta', 'ultra secreto', 'mega real', 'ultra real', 'sin foil', 'buy a box',
+  'ultra secreta', 'ultra secreto', 'mega real', 'ultra real', 'sin foil', 'no foil', 'buy a box',
   'foil', 'lluvia', 'secreta', 'secreto', 'legendaria', 'legendario', 'real', 'ur', 'mr', 'sp',
   'vasallo', 'vasalla', 'cortesano', 'cortesana', 'milenaria', 'premium', 'promo', 'promocional',
   'jo', 'kit', 'rework', 'alternativa', 'alternativo', 'leyendas',
@@ -16,14 +25,15 @@ const VARIANTES = [
   ['buy-a-box', /\bbuy a box\b|\bbab\b/],
   ['sp', /\bsp\b/],
   ['promo', /\bpromo(cional)?\b|\bjo\b|juego organizado|\bstaff\b|\btorneo\b/],
-  ['foil', /(?<!sin )\bfoil\b/],
+  ['foil', /(?<!\b(?:sin|no)[ -])\bfoil\b/],
 ];
 
 export function decodificar(texto) {
   return String(texto ?? '')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
-    .replace(/&([a-z]+);/gi, (entidad, n) => ENTIDADES[n.toLowerCase()] ?? entidad)
+    .replace(/&amp;/g, '&')
+    .replace(/&#(\d+);/g, (entidad, n) => desdeCodigo(entidad, Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (entidad, n) => desdeCodigo(entidad, parseInt(n, 16)))
+    .replace(/&([a-z]+);/gi, (entidad, n) => ENTIDADES[n] ?? ENTIDADES[n.toLowerCase()] ?? entidad)
     .replace(/\u00a0/g, ' ');
 }
 
