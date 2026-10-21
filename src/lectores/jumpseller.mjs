@@ -20,26 +20,45 @@ export function parsearListado(html, base) {
     };
   });
   const ultima = Number($('ul.pager li.last a').attr('href')?.match(/page=(\d+)/)?.[1] ?? 1);
-  return { productos, ultima };
+  const origen = new URL(base).origin;
+  const subcategorias = [...new Set($('section[id^="theme-section-category-subcategories-template"] a.theme-section__link[href]').toArray()
+    .map((a) => new URL($(a).attr('href'), base))
+    .filter((url) => url.origin === origen)
+    .map((url) => url.pathname.replace(/^\/+|\/+$/g, ''))
+    .filter(Boolean))];
+  return { productos, ultima, subcategorias };
+}
+
+async function recorrer(config, cliente, ruta, ancestros, formato, visitadas, vistos) {
+  if (visitadas.has(ruta)) return;
+  visitadas.add(ruta);
+  const rutas = [...ancestros, ruta];
+  const hijas = new Set();
+  for (let pagina = 1; ; pagina++) {
+    const html = await cliente.texto(`${config.url}/${ruta}?page=${pagina}`);
+    const { productos, ultima, subcategorias } = parsearListado(html, config.url);
+    for (const producto of productos) {
+      const previo = vistos.get(producto.id);
+      vistos.set(producto.id, {
+        tienda: config.id,
+        ...producto,
+        pistas: [...new Set([...(previo?.pistas ?? []), ...rutas.map((r) => `ruta:${r}`)])],
+        formato: formato ?? previo?.formato ?? null,
+      });
+    }
+    for (const subcategoria of subcategorias) {
+      if (subcategoria.startsWith(`${ruta}/`)) hijas.add(subcategoria);
+    }
+    if (!productos.length || pagina >= ultima) break;
+  }
+  for (const hija of hijas) await recorrer(config, cliente, hija, rutas, formato, visitadas, vistos);
 }
 
 export async function leer(config, cliente) {
   const vistos = new Map();
+  const visitadas = new Set();
   for (const categoria of config.categorias) {
-    for (let pagina = 1; ; pagina++) {
-      const html = await cliente.texto(`${config.url}/${categoria.ruta}?page=${pagina}`);
-      const { productos, ultima } = parsearListado(html, config.url);
-      for (const producto of productos) {
-        const previo = vistos.get(producto.id);
-        vistos.set(producto.id, {
-          tienda: config.id,
-          ...producto,
-          pistas: [...new Set([...(previo?.pistas ?? []), `ruta:${categoria.ruta}`])],
-          formato: categoria.formato ?? previo?.formato ?? null,
-        });
-      }
-      if (!productos.length || pagina >= ultima) break;
-    }
+    await recorrer(config, cliente, categoria.ruta, [], categoria.formato, visitadas, vistos);
   }
   return [...vistos.values()];
 }

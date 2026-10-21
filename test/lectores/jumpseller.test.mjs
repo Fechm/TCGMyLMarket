@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { leer, parsearListado } from '../../src/lectores/jumpseller.mjs';
 
 const pagina = `
@@ -74,4 +75,42 @@ test('leer recorre categorías y páginas, y combina pistas de un mismo producto
   assert.equal(a.tienda, 'mylserena');
   assert.deepEqual(a.pistas, ['ruta:singles-pb-1', 'ruta:singles-pb-1/leyendas-pb-40']);
   assert.equal(a.formato, 'pb');
+});
+
+const plantilla = readFileSync(new URL('../fixtures/mylserena-subcategorias.html', import.meta.url), 'utf8');
+const seccion = (ruta) => `<section id="theme-section-category-subcategories-template-1"><a href="/${ruta}" class="theme-section__link" title="Ver Más">Ver Más</a></section>`;
+
+test('parsearListado detecta las subcategorías de la plantilla y no las del menú', () => {
+  const { productos, subcategorias } = parsearListado(plantilla, 'https://mylserena.cl');
+  assert.deepEqual(subcategorias, ['singles-imperio/dracula-rey-vampiro/reales', 'singles-imperio/dracula-rey-vampiro/promocionales']);
+  assert.deepEqual(productos.map((p) => p.id), ['37505679', '37505680', '37505800']);
+  assert.deepEqual(parsearListado(pagina, 'https://mylserena.cl').subcategorias, []);
+});
+
+test('leer recorre subcategorías con sus páginas y suma las pistas de las categorías ancestro', async () => {
+  const padre = 'singles-imperio/dracula-rey-vampiro';
+  const paginas = {
+    [`https://mylserena.cl/${padre}?page=1`]: plantilla,
+    [`https://mylserena.cl/${padre}/reales?page=1`]: bloque('37505679', 'Pricolici (Drácula - Real)') + bloque('900', 'X (Drácula - Real)') + pager(2),
+    [`https://mylserena.cl/${padre}/reales?page=2`]: bloque('901', 'Y (Drácula - Real)') + pager(2),
+    [`https://mylserena.cl/${padre}/promocionales?page=1`]: bloque('37505800', 'Vlad Tepes') + seccion(`${padre}/promocionales/foil`) + seccion(`${padre}/reales`) + seccion(padre),
+    [`https://mylserena.cl/${padre}/promocionales/foil?page=1`]: bloque('950', 'Z (Drácula - Foil)') + seccion(`${padre}/promocionales/foil`),
+  };
+  const pedidas = [];
+  const cliente = {
+    async texto(url) {
+      pedidas.push(url);
+      if (!(url in paginas)) throw new Error(`URL no esperada ${url}`);
+      return paginas[url];
+    },
+  };
+  const listados = await leer({ id: 'mylserena', url: 'https://mylserena.cl', categorias: [{ ruta: padre, formato: 'imperio' }] }, cliente);
+  assert.deepEqual(pedidas.sort(), Object.keys(paginas).sort());
+  assert.deepEqual(listados.map((l) => l.id).sort(), ['37505679', '37505680', '37505800', '900', '901', '950']);
+  const pistas = (id) => listados.find((l) => l.id === id).pistas;
+  assert.deepEqual(pistas('37505679'), [`ruta:${padre}`, `ruta:${padre}/reales`]);
+  assert.deepEqual(pistas('37505680'), [`ruta:${padre}`]);
+  assert.deepEqual(pistas('901'), [`ruta:${padre}`, `ruta:${padre}/reales`]);
+  assert.deepEqual(pistas('950'), [`ruta:${padre}`, `ruta:${padre}/promocionales`, `ruta:${padre}/promocionales/foil`]);
+  assert.ok(listados.every((l) => l.formato === 'imperio'));
 });
