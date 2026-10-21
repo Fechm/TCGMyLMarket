@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { leer } from '../../src/lectores/shopify.mjs';
+import { PRECIO_MAXIMO, leer } from '../../src/lectores/shopify.mjs';
 
 const config = {
   id: 'devastation', url: 'https://storedevastation.com', coleccion: 'cartas-mitos-y-leyendas',
@@ -46,4 +46,13 @@ test('sigue paginando mientras la página venga llena', async () => {
   const listados = await leer(config, cliente);
   assert.equal(listados.length, 250);
   assert.equal(respuestas.length, 0);
+});
+
+test('precio sobre el máximo cuenta como sin stock y precio 0', async () => {
+  const cliente = {
+    json: async () => ({ datos: { products: [{ id: 1, title: 'Basura', handle: 'basura', tags: [], variants: [{ available: true, price: '2000000' }] }] } }),
+  };
+  const [listado] = await leer(config, cliente);
+  assert.equal(PRECIO_MAXIMO, 1000000);
+  assert.deepEqual([listado.precio, listado.stock], [0, false]);
 });

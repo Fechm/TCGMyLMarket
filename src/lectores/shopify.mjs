@@ -1,3 +1,5 @@
+export const PRECIO_MAXIMO = 1000000;
+
 export async function leer(config, cliente) {
   const listados = [];
   const ignorados = new Set(config.tagsIgnorados ?? []);
@@ -7,8 +9,9 @@ export async function leer(config, cliente) {
     const productos = datos.products ?? [];
     for (const producto of productos) {
       const variante = producto.variants?.[0];
-      const disponible = Boolean(variante?.available);
-      const precio = disponible ? Math.round(Number(variante.price)) || 0 : 0;
+      const bruto = Math.round(Number(variante?.price)) || 0;
+      const disponible = Boolean(variante?.available) && bruto <= PRECIO_MAXIMO;
+      const precio = disponible ? bruto : 0;
       listados.push({
         tienda: config.id,
         id: String(producto.id),
