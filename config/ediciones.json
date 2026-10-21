@@ -41,7 +41,9 @@
     "alias": {
       "laira": ["cat:323"],
       "minimarket": ["cod:Leyendas PB 3.0"],
-      "mylserena": ["cod:Leyendas PB 3.0", "ruta:singles-pb-1/leyendas-30"]
+      "mylserena": ["cod:Leyendas PB 3.0", "ruta:singles-pb-1/leyendas-30"],
+      "pandora": ["cod:Leyendas PB 3.0"],
+      "jpstore": ["cat:3707"]
     }
   },
   "leyendas-pe-3": {
@@ -50,7 +52,8 @@
     "alias": {
       "laira": ["cat:267"],
       "minimarket": ["cod:LPE3.0"],
-      "mylserena": ["cod:LPE3.0", "ruta:primera-era/singles-pe/leyendas-30"]
+      "mylserena": ["cod:LPE3.0", "ruta:primera-era/singles-pe/leyendas-30"],
+      "pandora": ["cod:LPE3.0"]
     }
   },
   "hijos-de-daana-aniversario": {
@@ -87,36 +90,275 @@
   "onyria": {
     "nombre": "Onyria",
     "formato": "imperio",
-    "alias": { "laira": ["cat:338"], "mylserena": ["ruta:singles-imperio/onyria"] }
+    "alias": {
+      "laira": ["cat:338"],
+      "mylserena": ["ruta:singles-imperio/onyria"]
+    }
   },
   "kaiju-vs-mecha": {
     "nombre": "Kaiju vs Mecha",
     "formato": "imperio",
-    "alias": { "laira": ["cat:417"], "mylserena": ["ruta:singles-imperio/kaiju-vs-mecha"] }
+    "alias": {
+      "laira": ["cat:417"],
+      "mylserena": ["cod:KVM"],
+      "minimarket": ["cod:KVM"]
+    }
   },
   "libertadores": {
     "nombre": "Libertadores",
     "formato": "imperio",
-    "alias": { "laira": ["cat:374"], "mylserena": ["ruta:singles-imperio/libertadores"] }
+    "alias": {
+      "laira": ["cat:374"],
+      "mylserena": ["ruta:singles-imperio/libertadores"]
+    }
   },
   "bestiarium": {
     "nombre": "Bestiarium",
     "formato": "imperio",
-    "alias": { "laira": ["cat:293"], "mylserena": ["ruta:singles-imperio/bestiarium"] }
+    "alias": {
+      "laira": ["cat:293"],
+      "mylserena": ["ruta:singles-imperio/bestiarium"]
+    }
   },
   "napoleon": {
     "nombre": "Napoleón",
     "formato": "imperio",
-    "alias": { "laira": ["cat:276"], "mylserena": ["ruta:singles-imperio/napoleon"] }
+    "alias": {
+      "laira": ["cat:276"],
+      "mylserena": ["ruta:singles-imperio/napoleon"]
+    }
   },
   "espiritu-samurai": {
     "nombre": "Espíritu Samurái",
     "formato": "imperio",
-    "alias": { "laira": ["cat:265"], "mylserena": ["ruta:singles-imperio/espiritu-samurai"] }
+    "alias": {
+      "laira": ["cat:265"],
+      "mylserena": ["ruta:singles-imperio/espiritu-samurai"]
+    }
   },
   "secretos-arcanos": {
     "nombre": "Secretos Arcanos",
     "formato": "imperio",
-    "alias": { "laira": ["cat:315"], "mylserena": ["ruta:singles-imperio/secretos-arcanos"] }
+    "alias": {
+      "laira": ["cat:315"],
+      "mylserena": ["ruta:singles-imperio/secretos-arcanos"]
+    }
+  },
+  "amenaza-kaiju-escuadron-mecha": {
+    "nombre": "Amenaza Kaiju y Escuadrón Mecha",
+    "formato": "imperio",
+    "alias": {
+      "laira": ["cat:308"],
+      "mylserena": ["cod:Amenaza Kaiju", "cod:Escuadrón Mecha"]
+    }
+  },
+  "kit-racial-imperio-2024": {
+    "nombre": "Kit Racial Imperio 2024",
+    "formato": "imperio",
+    "alias": {
+      "laira": ["cat:316"],
+      "mylserena": ["ruta:singles-imperio/kit-raciales-2024"]
+    }
+  },
+  "lootbox-imperio-2024": {
+    "nombre": "Lootbox Imperio 2024",
+    "formato": "imperio",
+    "alias": {
+      "laira": ["cat:310"],
+      "mylserena": ["ruta:singles-imperio/lootbox-2024"]
+    }
+  },
+  "toolkit-hielo-y-fuego": {
+    "nombre": "Toolkit Hielo y Fuego",
+    "formato": "imperio",
+    "alias": {
+      "laira": ["cat:304"],
+      "mylserena": ["ruta:singles-imperio/toolkit-2025"]
+    }
+  },
+  "lootbox-pb-2024": {
+    "nombre": "Lootbox Primer Bloque 2024",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:300", "cat:301"],
+      "minimarket": ["cod:LBPB24"],
+      "mylserena": ["cod:LBPB24"],
+      "pandora": ["cod:LBPB24"]
+    }
+  },
+  "lootbox-pb-2025": {
+    "nombre": "Lootbox Primer Bloque 2025",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:422"],
+      "minimarket": ["cod:LBPB25"],
+      "mylserena": ["cod:LBPB25"],
+      "pandora": ["cod:Lootbox PB 2025"]
+    }
+  },
+  "toolkit-pb-2025": {
+    "nombre": "Toolkit Primer Bloque 2025",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:324"],
+      "mylserena": ["cod:TKPB25"],
+      "pandora": ["cod:TKPB25"]
+    }
+  },
+  "relatos-de-daana": {
+    "nombre": "Relatos de Daana",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:369"],
+      "minimarket": ["cod:AHDX"],
+      "mylserena": ["cod:AHDX"],
+      "pandora": ["cod:AHDX"]
+    }
+  },
+  "kit-extension-pb-2022": {
+    "nombre": "Kit Extensión Primer Bloque 2022",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:321"],
+      "minimarket": ["cod:Kit Extensión 2022"],
+      "mylserena": ["cod:Kit Extensión 2022"],
+      "pandora": ["cod:PBX"],
+      "jpstore": ["cat:3711"]
+    }
+  },
+  "kit-dracula-pb": {
+    "nombre": "Kit Drácula Primer Bloque",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:322"],
+      "mylserena": ["cod:Kit Drácula"],
+      "pandora": ["cod:Kit Drácula"],
+      "jpstore": ["cat:3640"]
+    }
+  },
+  "colmillos-de-avalon-e-inframundo": {
+    "nombre": "Colmillos de Avalon y del Inframundo",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:396"],
+      "minimarket": ["cod:Colmillos", "cod:Colmillos de Avalon"],
+      "mylserena": ["cod:Colmillos de Avalon", "cod:Colmillos del Inframundo"],
+      "pandora": ["cod:Colmillos de Avalon", "cod:Colmillos del Inframundo"],
+      "jpstore": ["cat:4125"]
+    }
+  },
+  "lootbox-pe-2024": {
+    "nombre": "Lootbox Primera Era 2024",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:307"],
+      "minimarket": ["cod:LBPE24"],
+      "mylserena": ["cod:LBPE24"],
+      "pandora": ["cod:LBPE24"]
+    }
+  },
+  "mundos-perdidos-1": {
+    "nombre": "Mundos Perdidos Parte 1",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:269"],
+      "mylserena": ["cod:MP1"],
+      "pandora": ["cod:MP1"]
+    }
+  },
+  "mundos-perdidos-2": {
+    "nombre": "Mundos Perdidos Parte 2",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:270"],
+      "minimarket": ["cod:MP2"],
+      "mylserena": ["cod:MP2"],
+      "pandora": ["cod:MP2"]
+    }
+  },
+  "mundos-perdidos-2026": {
+    "nombre": "Mundos Perdidos 2026",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:424"],
+      "minimarket": ["cod:MP3"],
+      "mylserena": ["cod:MP3"],
+      "pandora": ["cod:Mundos Perdidos"]
+    }
+  },
+  "vigilantes-de-la-noche": {
+    "nombre": "Vigilantes de la Noche",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:297"],
+      "mylserena": ["cod:VDLN"]
+    }
+  },
+  "xinnian-2025": {
+    "nombre": "Xinnián 2025",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:306"],
+      "minimarket": ["cod:Xinnian 2"],
+      "mylserena": ["cod:Xinnian Dos"],
+      "pandora": ["cod:Xinnian Dos"]
+    }
+  },
+  "xinnian-2026": {
+    "nombre": "Xinnián 2026",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:425"],
+      "minimarket": ["cod:Xinnian 3"],
+      "mylserena": ["cod:Xinnian 3"],
+      "pandora": ["cod:Xinnian 2026"]
+    }
+  },
+  "toolkit-pe-2024": {
+    "nombre": "Toolkit Primera Era 2024",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:318"],
+      "minimarket": ["cod:TKPE24"],
+      "mylserena": ["cod:TKPE24"]
+    }
+  },
+  "toolkit-pe-2025": {
+    "nombre": "Toolkit Primera Era 2025",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:305"],
+      "minimarket": ["cod:TK25"],
+      "mylserena": ["cod:TK25"]
+    }
+  },
+  "mundo-medieval": {
+    "nombre": "Mundo Medieval",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:319"],
+      "minimarket": ["cod:REX"],
+      "mylserena": ["cod:REX"]
+    }
+  },
+  "raciales-pe-2025": {
+    "nombre": "Raciales Primera Era 2025",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:365"],
+      "minimarket": ["cod:Kit Racial Guerrero 2025", "cod:Kit Racial Vampiro 2025", "cod:Kit Racial Licántropo 2025", "cod:Kit Racial Abominación 2025", "cod:Kit Racial Bestia 2025", "cod:Kit Racial Chamán 2025", "cod:Kit Racial Dios 2025", "cod:Kit Racial Cazador 2025", "cod:Kit Racial Bárbaro 2025"],
+      "mylserena": ["cod:Kit Racial Guerrero 2025", "cod:Kit Racial Vampiro 2025", "cod:Kit Racial Licántropo 2025", "cod:Kit Racial Abominación 2025", "cod:Kit Racial Bestia 2025", "cod:Kit Racial Chamán 2025", "cod:Kit Racial Dios 2025", "cod:Kit Racial Cazador 2025", "cod:Kit Racial Bárbaro 2025"],
+      "pandora": ["cod:Kit Racial PE 2025", "cod:Kit Racial Abominación 2025"]
+    }
+  },
+  "raciales-pe-2025-ii": {
+    "nombre": "Raciales Primera Era 2025 II",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:393"],
+      "minimarket": ["cod:Kit Racial Criaturas 2025", "cod:Kit Racial Caballero 2025", "cod:Kit Racial Campeón 2025", "cod:Kit Racial Kami 2025", "cod:Kit Racial Faerie 2025", "cod:Kit Racial Xian 2025", "cod:Kit Racial Dragón 2025"],
+      "mylserena": ["cod:Kit Racial Criaturas 2025", "cod:Kit Racial Caballero 2025", "cod:Kit Racial Campeón 2025", "cod:Kit Racial Kami 2025", "cod:Kit Racial Faerie 2025", "cod:Kit Racial Xian 2025", "cod:Kit Racial Dragón 2025"],
+      "pandora": ["cod:Colección Racial PE 2025"]
+    }
   }
 }

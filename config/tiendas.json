@@ -8,6 +8,7 @@
       "lector": "woocommerce",
       "ruta": "/wp-json/wc/store/v1/products",
       "leerAlias": false,
+      "excluir": "^set singles",
       "categorias": [
         { "id": 259, "formato": "pb" },
         { "id": 264, "formato": "imperio" },
