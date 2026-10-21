@@ -9,9 +9,18 @@ const MAXIMO_FILAS = 500;
 const cache = new Map();
 const estado = { vista: 'comparativo', ordenes: { comparativo: { campo: 'diferencia', asc: true }, brechas: null } };
 let meta;
+let turno = 0;
 
 function cargar(nombre) {
-  if (!cache.has(nombre)) cache.set(nombre, fetch(`data/${nombre}`).then((r) => r.json()));
+  if (!cache.has(nombre)) {
+    cache.set(nombre, fetch(`data/${nombre}`).then((r) => {
+      if (!r.ok) throw new Error(`${nombre}: HTTP ${r.status}`);
+      return r.json();
+    }).catch((error) => {
+      cache.delete(nombre);
+      throw error;
+    }));
+  }
   return cache.get(nombre);
 }
 
@@ -87,7 +96,9 @@ function subtitulo(f) {
 }
 
 async function renderComparativo() {
+  const propio = ++turno;
   const filas = await cargar(`cartas-${$('#formato').value}.json`);
+  if (propio !== turno) return;
   const visibles = ordenar(filtrar(filas), estado.ordenes.comparativo);
   $('#resumen').textContent = `${visibles.length} de ${filas.length} singles de La Ira. * = solo una tienda con stock.`;
   $('#tabla').innerHTML = tabla(
@@ -106,7 +117,9 @@ async function renderComparativo() {
 }
 
 async function renderBrechas() {
+  const propio = ++turno;
   const todas = await cargar('brechas.json');
+  if (propio !== turno) return;
   const filas = filtrar(todas.filter((b) => b.formato === $('#formato').value));
   const visibles = ordenar(filas, estado.ordenes.brechas);
   $('#resumen').textContent = `${visibles.length} cartas con stock en otras tiendas que La Ira no tiene con stock.`;
@@ -124,7 +137,9 @@ async function renderBrechas() {
 }
 
 async function renderSinEmparejar() {
+  const propio = ++turno;
   const grupos = await cargar('sin-emparejar.json');
+  if (propio !== turno) return;
   $('#resumen').textContent = `${meta.totales.sinEmparejar} listados sin emparejar, agrupados por pistas. Sirven para completar config/ediciones.json.`;
   $('#tabla').innerHTML = `<table><thead><tr><th>Tienda</th><th>Motivo</th><th>Pistas</th><th>Cantidad</th><th>Ejemplos</th></tr></thead><tbody>${grupos.map((g) => `<tr>
     <td>${escapar(nombreTienda(g.tienda))}</td><td>${g.motivo}</td><td><code>${escapar(g.pistas.join(' '))}</code></td>
@@ -161,7 +176,7 @@ async function abrirDetalle(f) {
     ${esWeb(f.imagen) ? `<img src="${escapar(f.imagen)}" alt="" loading="lazy">` : ''}
     <h2>${escapar(f.nombre)}</h2>
     <p class="nota">${subtitulo(f)}</p>
-    <p>Market: <strong>${celdaMarket(f)}</strong> · Sugerido: <strong>${pesos(f.sugerido)}</strong></p>
+    <p>Market: <strong>${celdaMarket(f)}</strong> · Sugerido: <strong>${pesos(f.sugerido)}</strong>${vacio(f.min) || vacio(f.max) ? '' : ` · Rango: <strong>${pesos(f.min)} – ${pesos(f.max)}</strong>`}</p>
     <table><thead><tr><th>Tienda</th><th>Precio</th><th>Stock</th></tr></thead><tbody>
       ${tiendas.map((t) => `<tr><td>${enlaceTienda(t.url, nombreTienda(t.tienda))}</td>
         <td>${t.ambiguo ? 'varios precios' : pesos(t.precio)}</td><td>${t.stock ? 'sí' : 'no'}</td></tr>`).join('')}
@@ -205,4 +220,7 @@ async function iniciar() {
   await render();
 }
 
-iniciar();
+iniciar().catch((error) => {
+  console.error(error);
+  $('#resumen').textContent = 'No se pudieron cargar los datos.';
+});
