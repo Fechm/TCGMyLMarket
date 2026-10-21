@@ -1,0 +1,79 @@
+{
+  "propia": "laira",
+  "tiendas": [
+    {
+      "id": "laira",
+      "nombre": "La Ira",
+      "url": "https://laira.cl",
+      "lector": "woocommerce",
+      "ruta": "/wp-json/wc/store/v1/products",
+      "leerAlias": false,
+      "categorias": [
+        { "id": 259, "formato": "pb" },
+        { "id": 264, "formato": "imperio" },
+        { "id": 266, "formato": "pe" },
+        { "id": 277, "formato": "fx" },
+        { "id": 341, "formato": null }
+      ]
+    },
+    {
+      "id": "minimarket",
+      "nombre": "Minimarket CG",
+      "url": "https://minimarketcg.cl",
+      "lector": "woocommerce",
+      "ruta": "/wp-json/wc/store/v1/products",
+      "leerAlias": false,
+      "categorias": [
+        { "id": 27, "formato": "imperio" },
+        { "id": 28, "formato": "fx" },
+        { "id": 29, "formato": "pb" },
+        { "id": 39, "formato": "pe" }
+      ]
+    },
+    {
+      "id": "jpstore",
+      "nombre": "JP Store",
+      "url": "https://jpstore.cl",
+      "lector": "woocommerce",
+      "ruta": "/wp-json/wc/store/products",
+      "leerAlias": true,
+      "excluir": "^pedido",
+      "categorias": [
+        { "id": 16, "formato": null },
+        { "id": 1196, "formato": "pb" },
+        { "id": 1197, "formato": "fx" }
+      ]
+    },
+    {
+      "id": "devastation",
+      "nombre": "Devastation Store",
+      "url": "https://storedevastation.com",
+      "lector": "shopify",
+      "coleccion": "cartas-mitos-y-leyendas",
+      "tagsIgnorados": ["wk_global", "Devastation Providencia"]
+    },
+    {
+      "id": "mylserena",
+      "nombre": "Mylserena",
+      "url": "https://mylserena.cl",
+      "lector": "jumpseller",
+      "leerAlias": true,
+      "categorias": [
+        { "ruta": "singles-imperio", "formato": "imperio" },
+        { "ruta": "singles-pb-1", "formato": "pb" },
+        { "ruta": "primera-era/singles-pe", "formato": "pe" }
+      ]
+    },
+    {
+      "id": "pandora",
+      "nombre": "Pandora Store",
+      "url": "https://www.pandorastore.cl",
+      "lector": "jumpseller",
+      "leerAlias": true,
+      "categorias": [
+        { "ruta": "singles-primer-bloque-myl", "formato": "pb" },
+        { "ruta": "singles-primera-era-myl-1", "formato": "pe" }
+      ]
+    }
+  ]
+}

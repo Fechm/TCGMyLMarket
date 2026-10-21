@@ -1,0 +1,122 @@
+{
+  "dracula-rey-vampiro": {
+    "nombre": "Drácula, Rey Vampiro",
+    "formato": "imperio",
+    "reciente": true,
+    "alias": {
+      "mylserena": ["ruta:singles-imperio/dracula-rey-vampiro"]
+    }
+  },
+  "leyendas-de-ultratumba": {
+    "nombre": "Leyendas de Ultratumba",
+    "formato": "pe",
+    "reciente": true,
+    "alias": {
+      "mylserena": ["ruta:primera-era/singles-pe/leyendas-de-ultratumba", "cod:HLPE26"],
+      "minimarket": ["cod:HLPE26"],
+      "pandora": ["ruta:singles-primera-era-myl-1/ultratumba-pe"]
+    }
+  },
+  "leyendas-pb-4": {
+    "nombre": "Leyendas Primer Bloque 4.0",
+    "formato": "pb",
+    "alias": {
+      "minimarket": ["cod:LPB 4.0"],
+      "mylserena": ["cod:LPB 4.0", "ruta:singles-pb-1/leyendas-pb-40"],
+      "pandora": ["cod:LPB4", "ruta:singles-primer-bloque-myl/singles-pb-40"]
+    }
+  },
+  "leyendas-pe-4": {
+    "nombre": "Leyendas Primera Era 4.0",
+    "formato": "pe",
+    "alias": {
+      "minimarket": ["cod:LPE4"],
+      "mylserena": ["cod:LPE4", "ruta:primera-era/singles-pe/leyendas-pe-40"],
+      "pandora": ["cod:LPE4", "ruta:singles-primera-era-myl-1/leyendas-40"]
+    }
+  },
+  "leyendas-pb-3": {
+    "nombre": "Leyendas Primer Bloque 3.0",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:323"],
+      "minimarket": ["cod:Leyendas PB 3.0"],
+      "mylserena": ["cod:Leyendas PB 3.0", "ruta:singles-pb-1/leyendas-30"]
+    }
+  },
+  "leyendas-pe-3": {
+    "nombre": "Leyendas Primera Era 3.0",
+    "formato": "pe",
+    "alias": {
+      "laira": ["cat:267"],
+      "minimarket": ["cod:LPE3.0"],
+      "mylserena": ["cod:LPE3.0", "ruta:primera-era/singles-pe/leyendas-30"]
+    }
+  },
+  "hijos-de-daana-aniversario": {
+    "nombre": "Hijos de Daana Aniversario",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:282"],
+      "minimarket": ["cod:HD Aniversario"],
+      "mylserena": ["cod:HD Aniversario", "ruta:singles-pb-1/hijos-de-daana-aniversario"],
+      "pandora": ["cod:HD Aniversario"],
+      "jpstore": ["cat:3973"]
+    }
+  },
+  "helenica-aniversario": {
+    "nombre": "Helénica Aniversario",
+    "formato": "pb",
+    "alias": {
+      "laira": ["cat:260"],
+      "minimarket": ["cod:Helénica Aniv"],
+      "mylserena": ["cod:Helénica Aniv", "ruta:singles-pb-1/helenica-aniversario"],
+      "jpstore": ["cat:3652"]
+    }
+  },
+  "dominios-de-ra-aniversario": {
+    "nombre": "Dominios de Ra Aniversario",
+    "formato": "pb",
+    "alias": {
+      "minimarket": ["cod:Aniversario de Ra"],
+      "mylserena": ["ruta:singles-pb-1/aniversario-de-ra"],
+      "pandora": ["cod:Aniversario Ra", "ruta:juego-de-cartas-mitos-y-leyendas/primer-bloque/aniversario-ra"],
+      "jpstore": ["cat:4103"]
+    }
+  },
+  "onyria": {
+    "nombre": "Onyria",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:338"], "mylserena": ["ruta:singles-imperio/onyria"] }
+  },
+  "kaiju-vs-mecha": {
+    "nombre": "Kaiju vs Mecha",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:417"], "mylserena": ["ruta:singles-imperio/kaiju-vs-mecha"] }
+  },
+  "libertadores": {
+    "nombre": "Libertadores",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:374"], "mylserena": ["ruta:singles-imperio/libertadores"] }
+  },
+  "bestiarium": {
+    "nombre": "Bestiarium",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:293"], "mylserena": ["ruta:singles-imperio/bestiarium"] }
+  },
+  "napoleon": {
+    "nombre": "Napoleón",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:276"], "mylserena": ["ruta:singles-imperio/napoleon"] }
+  },
+  "espiritu-samurai": {
+    "nombre": "Espíritu Samurái",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:265"], "mylserena": ["ruta:singles-imperio/espiritu-samurai"] }
+  },
+  "secretos-arcanos": {
+    "nombre": "Secretos Arcanos",
+    "formato": "imperio",
+    "alias": { "laira": ["cat:315"], "mylserena": ["ruta:singles-imperio/secretos-arcanos"] }
+  }
+}
