@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyL Market</title>
+  <meta name="description" content="Singles de Mitos y Leyendas de La Ira frente al mercado chileno">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header>
+    <h1>MyL Market</h1>
+    <p class="sub">Singles de La Ira frente al mercado chileno</p>
+    <nav>
+      <button data-vista="comparativo" class="activa">Comparativo</button>
+      <button data-vista="brechas">Brechas</button>
+      <button data-vista="sin-emparejar">Sin emparejar</button>
+    </nav>
+  </header>
+  <main>
+    <section id="filtros">
+      <select id="formato" aria-label="Formato">
+        <option value="imperio">Imperio</option>
+        <option value="pb">Primer Bloque</option>
+        <option value="pe">Primera Era</option>
+        <option value="fx">Furia Extendido</option>
+      </select>
+      <select id="edicion" aria-label="Edición"></select>
+      <select id="estado" aria-label="Estado">
+        <option value="">Todos los estados</option>
+        <option value="bajo">Bajo mercado</option>
+        <option value="sobre">Sobre mercado</option>
+        <option value="en-linea">En línea</option>
+        <option value="sin-market">Sin market</option>
+      </select>
+      <input id="buscar" type="search" placeholder="Buscar carta…" aria-label="Buscar carta">
+    </section>
+    <p id="resumen"></p>
+    <div id="tabla"></div>
+  </main>
+  <dialog id="detalle">
+    <div id="detalle-contenido"></div>
+    <form method="dialog"><button>Cerrar</button></form>
+  </dialog>
+  <footer id="pie"></footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
