@@ -33,7 +33,7 @@ test('esRareza reconoce rarezas y variantes', () => {
 });
 
 const casos = [
-  ['Carwennan (LPB 4.0 - Legendaria)', 'carwennan', 'normal', ['lpb 4 0', 'legendaria']],
+  ['Carwennan (LPB 4.0 - Legendaria)', 'carwennan', 'legendaria', ['lpb 4 0', 'legendaria']],
   ['NACIMIENTO DE PEGASO - LPB4 - SECRETA', 'nacimiento de pegaso', 'secreta', ['lpb4', 'secreta']],
   ['Figuras Negras (LBPB24 - Ultra Secreta)', 'figuras negras', 'ultra-secreta', ['lbpb24', 'ultra secreta']],
   ['Guerrero Mixteco FOIL', 'guerrero mixteco', 'foil', []],
@@ -52,6 +52,11 @@ const casos = [
   ['Paladín Harker (Secretos Arcanos - Real)', 'paladin harker', 'normal', ['secretos arcanos', 'real']],
   ['Dawit II – Mega Real', 'dawit ii', 'normal', ['mega real']],
   ['Mago Merlin (Rework) (Aniversario 25 Años)', 'mago merlin', 'normal', ['rework', 'aniversario 25 anos']],
+  ['Galdar Legendario', 'galdar', 'legendaria', []],
+  ['Urania Legendaria', 'urania', 'legendaria', []],
+  ['HOMERO &#8211; LEGENDARIO', 'homero', 'legendaria', ['legendario']],
+  ['Duhan (LPE4 - LEGENDARIA)', 'duhan', 'legendaria', ['lpe4', 'legendaria']],
+  ['Escarabeo - Legendaria - Aniversario Ra', 'escarabeo', 'legendaria', ['legendaria', 'aniversario ra']],
 ];
 
 for (const [nombre, nombreClave, variante, codigos] of casos) {

@@ -22,6 +22,7 @@ const VARIANTES = [
   ['ultra-secreta', /\bultra ?secret[ao]\b/],
   ['secreta', /\bsecret[ao]\b/],
   ['alternativa', /\balternativ[ao]\b|\bfull art\b/],
+  ['legendaria', /\blegendari[ao]s?\b/],
   ['buy-a-box', /\bbuy a box\b|\bbab\b/],
   ['sp', /\bsp\b/],
   ['promo', /\bpromo(cional)?\b|\bjo\b|juego organizado|\bstaff\b|\btorneo\b/],

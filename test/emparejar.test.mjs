@@ -28,7 +28,7 @@ test('normalizarPista', () => {
 
 test('empareja por código en el nombre', () => {
   const indice = crearIndice(ediciones);
-  assert.equal(unico(indice, { nombre: 'Carwennan (LPB 4.0 - Legendaria)' }).clave, 'carwennan|leyendas-pb-4|normal');
+  assert.equal(unico(indice, { nombre: 'Carwennan (LPB 4.0 - Legendaria)' }).clave, 'carwennan|leyendas-pb-4|legendaria');
   assert.equal(
     unico(indice, { tienda: 'pandora', nombre: 'NACIMIENTO DE PEGASO - LPB4 - SECRETA' }).clave,
     'nacimiento de pegaso|leyendas-pb-4|secreta',
