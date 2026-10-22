@@ -4,21 +4,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MyL Market</title>
-  <meta name="description" content="Singles de Mitos y Leyendas de La Ira frente al mercado chileno">
+  <meta name="description" content="Singles y sellado de Mitos y Leyendas de La Ira frente al mercado chileno">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <header>
-    <h1>MyL Market</h1>
-    <p class="sub">Singles de La Ira frente al mercado chileno</p>
-    <nav>
-      <button data-vista="comparativo" class="activa">Comparativo</button>
-      <button data-vista="brechas">Brechas</button>
-      <button data-vista="sin-emparejar">Sin emparejar</button>
-    </nav>
+  <header id="barra">
+    <a class="marca" href="#singles/comparativo"><img src="logo.svg" alt="" width="28" height="28"><span>MyL Market</span></a>
+    <button id="abrir-menu" type="button" aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">☰</button>
   </header>
+  <div id="velo" hidden></div>
+  <aside id="menu">
+    <a class="marca" href="#singles/comparativo"><img src="logo.svg" alt="" width="36" height="36"><span>MyL Market</span></a>
+    <nav aria-label="Vistas">
+      <p class="grupo">Singles</p>
+      <a href="#singles/comparativo">Comparativo</a>
+      <a href="#singles/brechas">Brechas</a>
+      <p class="grupo">Sellado</p>
+      <a href="#sellado/comparativo">Comparativo</a>
+      <a href="#sellado/brechas">Brechas</a>
+      <p class="grupo">Diagnóstico</p>
+      <a href="#diagnostico/sin-emparejar">Sin emparejar</a>
+    </nav>
+    <footer id="pie">
+      <p id="actualizado"></p>
+      <ul id="tiendas"></ul>
+      <p>Proyecto independiente, sin afiliación con Mitos y Leyendas.</p>
+    </footer>
+  </aside>
   <main>
-    <section id="filtros">
+    <header class="encabezado">
+      <h1 id="titulo">MyL Market</h1>
+      <p id="descripcion" class="sub"></p>
+    </header>
+    <section id="filtros" hidden>
       <select id="formato" aria-label="Formato">
         <option value="imperio">Imperio</option>
         <option value="pb">Primer Bloque</option>
@@ -42,7 +61,6 @@
     <div id="detalle-contenido"></div>
     <form method="dialog"><button>Cerrar</button></form>
   </dialog>
-  <footer id="pie"></footer>
   <script type="module" src="app.js"></script>
 </body>
 </html>

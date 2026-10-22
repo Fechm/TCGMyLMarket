@@ -5,9 +5,47 @@ const $ = (selector) => document.querySelector(selector);
 const vacio = (v) => v === null || v === undefined;
 const esWeb = (v) => typeof v === 'string' && /^https?:\/\//i.test(v);
 const MAXIMO_FILAS = 500;
+const VISTA_INICIAL = 'singles/comparativo';
+const FILTROS = ['formato', 'edicion', 'estado', 'buscar'];
+const SELLADO_PRONTO = 'El comparativo de sellado estará disponible pronto.';
+const VISTAS = {
+  'singles/comparativo': {
+    titulo: 'Singles · Comparativo',
+    descripcion: 'Precio de cada single de La Ira frente al market chileno, con un precio sugerido.',
+    filtros: FILTROS,
+    render: renderComparativo,
+  },
+  'singles/brechas': {
+    titulo: 'Singles · Brechas',
+    descripcion: 'Cartas que otras tiendas tienen con stock y La Ira no: oportunidades de surtido.',
+    filtros: ['formato', 'edicion', 'buscar'],
+    render: renderBrechas,
+  },
+  'sellado/comparativo': {
+    titulo: 'Sellado · Comparativo',
+    descripcion: 'Precio de sobres, displays y mazos sellados de La Ira frente al market chileno.',
+    filtros: [],
+    render: () => renderSellado('comparativo'),
+  },
+  'sellado/brechas': {
+    titulo: 'Sellado · Brechas',
+    descripcion: 'Productos sellados que otras tiendas tienen con stock y La Ira no.',
+    filtros: [],
+    render: () => renderSellado('brechas'),
+  },
+  'diagnostico/sin-emparejar': {
+    titulo: 'Diagnóstico · Sin emparejar',
+    descripcion: 'Listados de otras tiendas que no se pudieron asociar a una carta conocida.',
+    filtros: [],
+    render: renderSinEmparejar,
+  },
+};
 
 const cache = new Map();
-const estado = { vista: 'comparativo', ordenes: { comparativo: { campo: 'diferencia', asc: true }, brechas: null } };
+const estado = {
+  vista: VISTA_INICIAL,
+  ordenes: { 'singles/comparativo': { campo: 'diferencia', asc: true }, 'singles/brechas': null, 'sellado/comparativo': null, 'sellado/brechas': null },
+};
 let meta;
 let turno = 0;
 
@@ -42,7 +80,7 @@ function llenarEdiciones() {
 
 function filtrar(filas) {
   const edicion = $('#edicion').value;
-  const filtroEstado = estado.vista === 'comparativo' ? $('#estado').value : '';
+  const filtroEstado = VISTAS[estado.vista].filtros.includes('estado') ? $('#estado').value : '';
   const texto = $('#buscar').value.trim().toLowerCase();
   return filas.filter((f) => (!edicion || f.edicion === edicion)
     && (!filtroEstado || (filtroEstado === 'sin-market' ? f.market === null : f.estado === filtroEstado))
@@ -72,14 +110,20 @@ function tabla(columnas, filas, fila) {
   return `<table><thead><tr>${cabecera}</tr></thead><tbody>${filas.slice(0, MAXIMO_FILAS).map(fila).join('')}</tbody></table>${pie}`;
 }
 
-function conectar(filas) {
+function conectar(filas, alAbrir = abrirDetalle) {
   $('#tabla').querySelectorAll('th').forEach((th) => th.addEventListener('click', () => {
     const campo = th.dataset.campo;
     const actual = estado.ordenes[estado.vista];
     estado.ordenes[estado.vista] = { campo, asc: actual?.campo === campo ? !actual.asc : true };
-    render();
+    refrescar();
   }));
-  $('#tabla').querySelectorAll('tbody tr').forEach((tr) => tr.addEventListener('click', () => abrirDetalle(filas[Number(tr.dataset.i)])));
+  if (!alAbrir) return;
+  $('#tabla').querySelectorAll('tbody tr').forEach((tr) => tr.addEventListener('click', () => alAbrir(filas[Number(tr.dataset.i)]).catch(fallar)));
+}
+
+function mostrarVacio(mensaje) {
+  $('#resumen').textContent = '';
+  $('#tabla').innerHTML = `<p class="vacio">${escapar(mensaje)}</p>`;
 }
 
 function celdaMarket(f) {
@@ -99,7 +143,7 @@ async function renderComparativo() {
   const propio = ++turno;
   const filas = await cargar(`cartas-${$('#formato').value}.json`);
   if (propio !== turno) return;
-  const visibles = ordenar(filtrar(filas), estado.ordenes.comparativo);
+  const visibles = ordenar(filtrar(filas), estado.ordenes['singles/comparativo']);
   $('#resumen').textContent = `${visibles.length} de ${filas.length} singles de La Ira. * = solo una tienda con stock.`;
   $('#tabla').innerHTML = tabla(
     [['nombre', 'Carta'], ['precio', 'La Ira'], ['market', 'Market'], ['diferencia', 'Dif.'], ['nTiendas', 'Tiendas'], ['sugerido', 'Sugerido']],
@@ -121,7 +165,7 @@ async function renderBrechas() {
   const todas = await cargar('brechas.json');
   if (propio !== turno) return;
   const filas = filtrar(todas.filter((b) => b.formato === $('#formato').value));
-  const visibles = ordenar(filas, estado.ordenes.brechas);
+  const visibles = ordenar(filas, estado.ordenes['singles/brechas']);
   $('#resumen').textContent = `${visibles.length} cartas con stock en otras tiendas que La Ira no tiene con stock.`;
   $('#tabla').innerHTML = tabla(
     [['nombre', 'Carta'], ['market', 'Market'], ['conStock', 'Tiendas con stock'], ['sugerido', 'Sugerido']],
@@ -134,6 +178,43 @@ async function renderBrechas() {
     </tr>`,
   );
   conectar(visibles);
+}
+
+async function cargarSellado() {
+  if (!meta.sellado) return null;
+  try {
+    return await cargar('sellado.json');
+  } catch {
+    return null;
+  }
+}
+
+const COLUMNAS_SELLADO = {
+  comparativo: {
+    columnas: [['nombre', 'Producto'], ['precio', 'La Ira'], ['market', 'Market'], ['diferencia', 'Dif.'], ['nTiendas', 'Tiendas']],
+    fila: (f, i) => `<tr data-i="${i}" class="${escapar(f.estado ?? '')}"><td>${escapar(f.nombre)}</td><td>${pesos(f.precio)}</td>
+      <td>${pesos(f.market)}</td><td>${porcentaje(f.diferencia)}</td><td>${escapar(f.nTiendas ?? '—')}</td></tr>`,
+  },
+  brechas: {
+    columnas: [['nombre', 'Producto'], ['market', 'Market'], ['conStock', 'Tiendas con stock']],
+    fila: (f, i) => `<tr data-i="${i}"><td>${escapar(f.nombre)}</td><td>${pesos(f.market)}</td><td>${escapar(f.conStock ?? '—')}</td></tr>`,
+  },
+};
+
+async function renderSellado(tipo) {
+  const propio = ++turno;
+  const datos = await cargarSellado();
+  if (propio !== turno) return;
+  const filas = datos?.[tipo];
+  if (!Array.isArray(filas) || !filas.length) {
+    mostrarVacio(SELLADO_PRONTO);
+    return;
+  }
+  const visibles = ordenar(filas, estado.ordenes[estado.vista]);
+  const { columnas, fila } = COLUMNAS_SELLADO[tipo];
+  $('#resumen').textContent = `${visibles.length} productos sellados.`;
+  $('#tabla').innerHTML = tabla(columnas, visibles, fila);
+  conectar(visibles, null);
 }
 
 async function renderSinEmparejar() {
@@ -186,41 +267,98 @@ async function abrirDetalle(f) {
 }
 
 function renderPie() {
-  const tiendas = meta.tiendas.map((t) => {
+  $('#actualizado').textContent = `Actualizado ${new Date(meta.generado).toLocaleString('es-CL')}.`;
+  $('#tiendas').innerHTML = meta.tiendas.map((t) => {
     const viejo = t.reutilizado ? ` <em>(datos del ${t.ultimaLectura ? new Date(t.ultimaLectura).toLocaleDateString('es-CL') : '—'})</em>` : '';
-    return `${enlaceTienda(t.url, t.nombre)}: ${t.listados} (${t.conStock} con stock)${viejo}`;
+    return `<li>${enlaceTienda(t.url, t.nombre)}: ${t.listados} (${t.conStock} con stock)${viejo}</li>`;
+  }).join('');
+}
+
+function marcarMenu() {
+  document.querySelectorAll('#menu nav a').forEach((a) => {
+    const activa = a.getAttribute('href') === `#${estado.vista}`;
+    a.classList.toggle('activa', activa);
+    if (activa) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
   });
-  $('#pie').innerHTML = `Actualizado ${new Date(meta.generado).toLocaleString('es-CL')}. ${tiendas.join(' · ')}`;
+}
+
+function mostrarEncabezado(vista) {
+  $('#titulo').textContent = vista.titulo;
+  $('#descripcion').textContent = vista.descripcion;
+  document.title = `${vista.titulo} · MyL Market`;
+  $('#filtros').hidden = !vista.filtros.length;
+  FILTROS.forEach((id) => { $(`#${id}`).hidden = !vista.filtros.includes(id); });
 }
 
 async function render() {
-  document.querySelectorAll('nav button').forEach((b) => b.classList.toggle('activa', b.dataset.vista === estado.vista));
-  $('#filtros').hidden = estado.vista === 'sin-emparejar';
-  $('#estado').hidden = estado.vista !== 'comparativo';
-  if (estado.vista === 'comparativo') await renderComparativo();
-  else if (estado.vista === 'brechas') await renderBrechas();
-  else await renderSinEmparejar();
+  const vista = VISTAS[estado.vista];
+  marcarMenu();
+  mostrarEncabezado(vista);
+  await vista.render();
+}
+
+function fallar(error) {
+  console.error(error);
+  $('#resumen').textContent = 'No se pudieron cargar los datos.';
+}
+
+function refrescar() {
+  render().catch(fallar);
+}
+
+function vistaDesdeHash() {
+  const clave = decodeURIComponent(location.hash.slice(1));
+  return Object.hasOwn(VISTAS, clave) ? clave : VISTA_INICIAL;
+}
+
+function abrirMenu() {
+  $('#menu').classList.add('abierto');
+  $('#velo').hidden = false;
+  $('#abrir-menu').setAttribute('aria-expanded', 'true');
+  $('#menu nav a.activa')?.focus();
+}
+
+function cerrarMenu() {
+  if (!$('#menu').classList.contains('abierto')) return;
+  $('#menu').classList.remove('abierto');
+  $('#velo').hidden = true;
+  $('#abrir-menu').setAttribute('aria-expanded', 'false');
+}
+
+function navegar() {
+  estado.vista = vistaDesdeHash();
+  if (location.hash !== `#${estado.vista}`) history.replaceState(null, '', `#${estado.vista}`);
+  cerrarMenu();
+  refrescar();
+}
+
+function conectarMenu() {
+  $('#abrir-menu').addEventListener('click', abrirMenu);
+  $('#velo').addEventListener('click', cerrarMenu);
+  document.querySelectorAll('#menu a').forEach((a) => a.addEventListener('click', cerrarMenu));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarMenu(); });
+  window.matchMedia('(min-width: 768px)').addEventListener('change', cerrarMenu);
+  window.addEventListener('hashchange', navegar);
+}
+
+function conectarFiltros() {
+  $('#formato').addEventListener('change', () => {
+    llenarEdiciones();
+    refrescar();
+  });
+  $('#edicion').addEventListener('change', refrescar);
+  $('#estado').addEventListener('change', refrescar);
+  $('#buscar').addEventListener('input', refrescar);
 }
 
 async function iniciar() {
+  conectarMenu();
   meta = await cargar('meta.json');
   llenarEdiciones();
-  document.querySelectorAll('nav button').forEach((b) => b.addEventListener('click', () => {
-    estado.vista = b.dataset.vista;
-    render();
-  }));
-  $('#formato').addEventListener('change', () => {
-    llenarEdiciones();
-    render();
-  });
-  $('#edicion').addEventListener('change', render);
-  $('#estado').addEventListener('change', render);
-  $('#buscar').addEventListener('input', render);
+  conectarFiltros();
   renderPie();
-  await render();
+  navegar();
 }
 
-iniciar().catch((error) => {
-  console.error(error);
-  $('#resumen').textContent = 'No se pudieron cargar los datos.';
-});
+iniciar().catch(fallar);
