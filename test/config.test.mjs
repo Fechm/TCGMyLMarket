@@ -49,3 +49,21 @@ test('cada producto sellado tiene id único y una edición conocida del mismo fo
     assert.ok(Array.isArray(p.excluye), p.id);
   }
 });
+
+test('las tiendas de sellado incluyen la propia, con lector conocido, id único y sin alias', () => {
+  const sellado = leerJson('../config/tiendas-sellado.json');
+  assert.equal(sellado.propia, propia);
+  assert.ok(sellado.tiendas.some((t) => t.id === sellado.propia));
+  assert.equal(new Set(sellado.tiendas.map((t) => t.id)).size, sellado.tiendas.length);
+  for (const t of sellado.tiendas) {
+    assert.ok(LECTORES[t.lector], `lector desconocido en ${t.id}`);
+    assert.equal(t.leerAlias, false, t.id);
+    assert.match(t.url, /^https:\/\/[^/]+$/, t.id);
+    if (t.lector === 'shopify') assert.ok(t.coleccion, t.id);
+    else assert.ok(t.categorias?.length, `${t.id} sin categorías`);
+    for (const c of t.categorias ?? []) {
+      if (t.lector === 'woocommerce') assert.equal(typeof c.id, 'number', t.id);
+      else assert.ok(c.ruta && !c.ruta.startsWith('/'), t.id);
+    }
+  }
+});

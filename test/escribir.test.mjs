@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { agruparSinEmparejar, escribirSitio } from '../src/escribir.mjs';
+import { agruparSinEmparejar, escribirSellado, escribirSitio } from '../src/escribir.mjs';
 
 test('agrupa sin emparejar por tienda, motivo y pistas, ignorando rarezas', () => {
   const grupos = agruparSinEmparejar([
@@ -34,4 +34,11 @@ test('escribirSitio crea un archivo por formato y los generales', () => {
   assert.deepEqual(JSON.parse(readFileSync(join(dir, 'cartas-pb.json'), 'utf8')), [{ formato: 'pb', clave: 'a' }]);
   assert.deepEqual(JSON.parse(readFileSync(join(dir, 'cartas-imperio.json'), 'utf8')), []);
   assert.deepEqual(JSON.parse(readFileSync(join(dir, 'series-pe.json'), 'utf8')), {});
+});
+
+test('escribirSellado deja comparativo y brechas en sellado.json', () => {
+  const dir = join(mkdtempSync(join(tmpdir(), 'sitio-')), 'data');
+  escribirSellado(dir, { comparativo: [{ id: 'a' }], brechas: [{ id: 'b' }] });
+  assert.deepEqual(readdirSync(dir), ['sellado.json']);
+  assert.deepEqual(JSON.parse(readFileSync(join(dir, 'sellado.json'), 'utf8')), { comparativo: [{ id: 'a' }], brechas: [{ id: 'b' }] });
 });

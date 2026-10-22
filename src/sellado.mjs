@@ -1,5 +1,6 @@
 import { comparar, mediana, preciosPorTienda } from './calcular.mjs';
 import { plano } from './normalizar.mjs';
+import { resumirLectura } from './resguardo.mjs';
 
 export const FACTOR_ATIPICO = 2.2;
 
@@ -125,4 +126,18 @@ export function calcularSellado({ listados, catalogo, ediciones, propia }) {
   const comparativo = filas.filter((f) => f.listada).map(sinMarca);
   const brechas = filas.filter((f) => f.conStock > 0 && !f.stock).sort(ordenBrechas).map(sinMarca);
   return { comparativo, brechas };
+}
+
+export function armarSellado({ lecturas, catalogo, ediciones, propia, generado }) {
+  if (!lecturas.find((l) => l.tienda.id === propia)?.listados.length) return null;
+  const { comparativo, brechas } = calcularSellado({ listados: lecturas.flatMap((l) => l.listados), catalogo, ediciones, propia });
+  return {
+    datos: { comparativo, brechas },
+    meta: {
+      generado,
+      tiendas: lecturas.map(resumirLectura),
+      productos: catalogo.length,
+      totales: { comparativo: comparativo.length, brechas: brechas.length },
+    },
+  };
 }

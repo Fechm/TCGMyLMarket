@@ -27,3 +27,29 @@ export function guardarUltimos(dir, tienda, fecha, listados) {
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${tienda}.json`), JSON.stringify({ fecha, listados }));
 }
+
+export async function leerConResguardo({ tienda, clave = tienda.id, dir, ahora, leer }) {
+  const anteriores = leerUltimos(dir, clave);
+  try {
+    const listados = await leer();
+    const problema = validar(listados, anteriores?.listados);
+    if (problema) throw new Error(problema);
+    guardarUltimos(dir, clave, ahora, listados);
+    return { tienda, listados, ultimaLectura: ahora, reutilizado: false, error: null };
+  } catch (error) {
+    return { tienda, listados: anteriores?.listados ?? [], ultimaLectura: anteriores?.fecha ?? null, reutilizado: true, error: error.message };
+  }
+}
+
+export function resumirLectura({ tienda, listados, ultimaLectura, reutilizado, error }) {
+  return {
+    id: tienda.id,
+    nombre: tienda.nombre,
+    url: tienda.url,
+    listados: listados.length,
+    conStock: listados.filter((x) => x.stock).length,
+    ultimaLectura,
+    reutilizado,
+    error,
+  };
+}

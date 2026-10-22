@@ -28,3 +28,8 @@ export function escribirSitio(dir, { meta, comparativo, brechas, sinEmparejar, s
   escribir('brechas.json', brechas);
   escribir('sin-emparejar.json', agruparSinEmparejar(sinEmparejar));
 }
+
+export function escribirSellado(dir, { comparativo, brechas }) {
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'sellado.json'), JSON.stringify({ comparativo, brechas }));
+}

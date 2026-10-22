@@ -1,0 +1,83 @@
+{
+  "propia": "laira",
+  "tiendas": [
+    {
+      "id": "laira",
+      "nombre": "La Ira",
+      "url": "https://laira.cl",
+      "lector": "woocommerce",
+      "ruta": "/wp-json/wc/store/v1/products",
+      "leerAlias": false,
+      "categorias": [
+        { "id": 156, "formato": null },
+        { "id": 311, "formato": null }
+      ]
+    },
+    {
+      "id": "minimarket",
+      "nombre": "Minimarket CG",
+      "url": "https://minimarketcg.cl",
+      "lector": "woocommerce",
+      "ruta": "/wp-json/wc/store/v1/products",
+      "leerAlias": false,
+      "categorias": [
+        { "id": 24, "formato": null }
+      ]
+    },
+    {
+      "id": "devastation",
+      "nombre": "Devastation Store",
+      "url": "https://storedevastation.com",
+      "lector": "shopify",
+      "coleccion": "productos-mitos-y-leyendas",
+      "expandirVariantes": true,
+      "leerAlias": false,
+      "tagsIgnorados": ["wk_global", "Devastation Providencia"]
+    },
+    {
+      "id": "mylserena",
+      "nombre": "Mylserena",
+      "url": "https://mylserena.cl",
+      "lector": "jumpseller",
+      "leerAlias": false,
+      "categorias": [
+        { "ruta": "primer-bloque/productos-pb", "formato": null },
+        { "ruta": "primera-era/productos-pe", "formato": null },
+        { "ruta": "furia", "formato": null }
+      ]
+    },
+    {
+      "id": "pandora",
+      "nombre": "Pandora Store",
+      "url": "https://www.pandorastore.cl",
+      "lector": "jumpseller",
+      "leerAlias": false,
+      "categorias": [
+        { "ruta": "juego-de-cartas-mitos-y-leyendas/primer-bloque", "formato": null },
+        { "ruta": "juego-de-cartas-mitos-y-leyendas/primera-era", "formato": null }
+      ]
+    },
+    {
+      "id": "reino",
+      "nombre": "El Reino de los Duelos",
+      "url": "https://elreinodelosduelos.cl",
+      "lector": "woocommerce-html",
+      "leerAlias": false,
+      "categorias": [
+        { "ruta": "categoria-producto/mitos-y-leyendas", "formato": null }
+      ]
+    },
+    {
+      "id": "oneup",
+      "nombre": "One Up Store",
+      "url": "https://www.oneupstore.cl",
+      "lector": "bsale",
+      "leerAlias": false,
+      "categorias": [
+        { "ruta": "collection/imperio", "formato": null },
+        { "ruta": "collection/primera-era", "formato": null },
+        { "ruta": "collection/primer-bloque", "formato": null }
+      ]
+    }
+  ]
+}

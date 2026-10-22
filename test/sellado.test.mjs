@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { calcularSellado, cantidad, identificar, normalizarSellado } from '../src/sellado.mjs';
+import { armarSellado, calcularSellado, cantidad, identificar, normalizarSellado } from '../src/sellado.mjs';
 
 const leerJson = (ruta) => JSON.parse(readFileSync(new URL(ruta, import.meta.url), 'utf8'));
 const catalogo = leerJson('../config/sellado.json');
@@ -178,4 +178,49 @@ test('calcularSellado lista brechas ordenadas por reciente, tiendas con stock y 
   assert.equal(delta.market, 15000);
   const beta = brechas.find((b) => b.id === 'kit-b');
   assert.deepEqual([beta.precio, beta.stock, beta.referencia], [26990, false, 26700]);
+});
+
+const lectura = (id, listados, extra = {}) => ({
+  tienda: { id, nombre: id.toUpperCase(), url: `https://${id}.cl` }, listados, ultimaLectura: 'hoy', reutilizado: false, error: null, ...extra,
+});
+
+test('armarSellado calcula datos y meta con todas las tiendas', () => {
+  const resultado = armarSellado({
+    lecturas: [
+      lectura('laira', [s('laira', 'Kit Beta', 26990)]),
+      lectura('devastation', [s('devastation', 'Kit Beta', 26700), s('devastation', 'Kit Delta', 15000)]),
+      lectura('reino', [s('reino', 'Kit Beta', 26990), s('reino', 'Kit Delta', 15000)]),
+      lectura('oneup', [], { reutilizado: true, ultimaLectura: null, error: 'HTTP 503' }),
+    ],
+    catalogo: mini, ediciones, propia: 'laira', generado: 'hoy',
+  });
+  assert.deepEqual(resultado.datos.comparativo.map((f) => f.id), ['kit-b']);
+  assert.deepEqual(resultado.datos.brechas.map((f) => f.id), ['kit-d']);
+  assert.equal(resultado.meta.generado, 'hoy');
+  assert.equal(resultado.meta.productos, mini.length);
+  assert.deepEqual(resultado.meta.totales, { comparativo: 1, brechas: 1 });
+  assert.deepEqual(resultado.meta.tiendas.map((t) => [t.id, t.nombre, t.listados, t.conStock, t.error]), [
+    ['laira', 'LAIRA', 1, 1, null], ['devastation', 'DEVASTATION', 2, 2, null], ['reino', 'REINO', 2, 2, null], ['oneup', 'ONEUP', 0, 0, 'HTTP 503'],
+  ]);
+});
+
+test('armarSellado usa la lectura reutilizada de La Ira si existe', () => {
+  const resultado = armarSellado({
+    lecturas: [
+      lectura('laira', [s('laira', 'Kit Beta', 26990)], { reutilizado: true, ultimaLectura: 'ayer', error: 'HTTP 500' }),
+      lectura('reino', [s('reino', 'Kit Beta', 26990)]),
+    ],
+    catalogo: mini, ediciones, propia: 'laira', generado: 'hoy',
+  });
+  assert.equal(resultado.datos.comparativo.length, 1);
+  assert.deepEqual([resultado.meta.tiendas[0].reutilizado, resultado.meta.tiendas[0].error], [true, 'HTTP 500']);
+});
+
+test('armarSellado no entrega sellado si La Ira no tiene listados', () => {
+  const lecturas = [
+    lectura('laira', [], { reutilizado: true, ultimaLectura: null, error: 'caída' }),
+    lectura('reino', [s('reino', 'Kit Beta', 26990)]),
+  ];
+  assert.equal(armarSellado({ lecturas, catalogo: mini, ediciones, propia: 'laira', generado: 'hoy' }), null);
+  assert.equal(armarSellado({ lecturas: lecturas.slice(1), catalogo: mini, ediciones, propia: 'laira', generado: 'hoy' }), null);
 });
