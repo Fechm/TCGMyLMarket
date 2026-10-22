@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { leer as leerBsale } from '../src/lectores/bsale.mjs';
 import { parsearListado } from '../src/lectores/jumpseller.mjs';
 import { leer as leerShopify } from '../src/lectores/shopify.mjs';
 import { leer as leerWoo } from '../src/lectores/woocommerce.mjs';
@@ -56,6 +57,20 @@ test('woocommerce-html real: elreinodelosduelos', async () => {
   }, cliente);
   assert.ok(listados.length >= 100, `solo ${listados.length}`);
   verificar(listados, 'https://elreinodelosduelos.cl/producto/');
+  assert.ok(listados.some((l) => l.stock), 'ningún producto con stock');
+  assert.ok(listados.some((l) => !l.stock), 'ningún producto agotado');
+});
+
+test('bsale real: oneupstore', async () => {
+  const paginas = [fixture('oneupstore-1.html'), fixture('oneupstore-2.html')];
+  const pedidas = [];
+  const cliente = { texto: async (url) => { pedidas.push(url); return paginas[pedidas.length - 1]; } };
+  const listados = await leerBsale({
+    id: 'oneup', url: 'https://www.oneupstore.cl', categorias: [{ ruta: 'collection/imperio', formato: null }],
+  }, cliente);
+  assert.equal(pedidas.length, 2);
+  assert.ok(listados.length >= 30, `solo ${listados.length}`);
+  verificar(listados, 'https://www.oneupstore.cl/product/');
   assert.ok(listados.some((l) => l.stock), 'ningún producto con stock');
   assert.ok(listados.some((l) => !l.stock), 'ningún producto agotado');
 });
