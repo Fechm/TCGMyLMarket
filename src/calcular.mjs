@@ -14,7 +14,7 @@ export function comparar(precio, market) {
   return { diferencia: Math.round(exacta * 1000) / 1000, estado };
 }
 
-function preciosPorTienda(listados) {
+export function preciosPorTienda(listados) {
   const porTienda = new Map();
   for (const listado of listados) {
     const grupo = porTienda.get(listado.tienda);
