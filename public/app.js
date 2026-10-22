@@ -6,31 +6,37 @@ const vacio = (v) => v === null || v === undefined;
 const esWeb = (v) => typeof v === 'string' && /^https?:\/\//i.test(v);
 const MAXIMO_FILAS = 500;
 const VISTA_INICIAL = 'singles/comparativo';
-const FILTROS = ['formato', 'edicion', 'estado', 'buscar'];
+const FILTROS = ['formato', 'edicion', 'estado', 'formato-sellado', 'tipo', 'buscar'];
+const FILTROS_SELLADO = ['formato-sellado', 'tipo', 'buscar'];
+const TIPOS = { display: 'display', sobre: 'sobre', kit: 'kit', mazo: 'mazo', especial: 'especial', toolkit: 'toolkit', lootbox: 'lootbox', coleccion: 'colección' };
 const SELLADO_PRONTO = 'El comparativo de sellado estará disponible pronto.';
 const VISTAS = {
   'singles/comparativo': {
     titulo: 'Singles · Comparativo',
     descripcion: 'Precio de cada single de La Ira frente al market chileno, con un precio sugerido.',
-    filtros: FILTROS,
+    filtros: ['formato', 'edicion', 'estado', 'buscar'],
+    buscar: 'Buscar carta…',
     render: renderComparativo,
   },
   'singles/brechas': {
     titulo: 'Singles · Brechas',
     descripcion: 'Cartas que otras tiendas tienen con stock y La Ira no: oportunidades de surtido.',
     filtros: ['formato', 'edicion', 'buscar'],
+    buscar: 'Buscar carta…',
     render: renderBrechas,
   },
   'sellado/comparativo': {
     titulo: 'Sellado · Comparativo',
     descripcion: 'Precio de sobres, displays y mazos sellados de La Ira frente al market chileno.',
-    filtros: [],
+    filtros: FILTROS_SELLADO,
+    buscar: 'Buscar producto…',
     render: () => renderSellado('comparativo'),
   },
   'sellado/brechas': {
     titulo: 'Sellado · Brechas',
     descripcion: 'Productos sellados que otras tiendas tienen con stock y La Ira no.',
-    filtros: [],
+    filtros: FILTROS_SELLADO,
+    buscar: 'Buscar producto…',
     render: () => renderSellado('brechas'),
   },
   'diagnostico/sin-emparejar': {
@@ -67,6 +73,7 @@ function escapar(texto) {
 }
 
 const nombreTienda = (id) => meta.tiendas.find((t) => t.id === id)?.nombre ?? id;
+const nombreTiendaSellado = (id) => meta.sellado?.tiendas.find((t) => t.id === id)?.nombre ?? id;
 const nombreEdicion = (id) => meta.ediciones[id]?.nombre ?? id;
 
 function llenarEdiciones() {
@@ -189,17 +196,45 @@ async function cargarSellado() {
   }
 }
 
+function subtituloSellado(f) {
+  const partes = [nombreEdicion(f.edicion), TIPOS[f.tipo] ?? f.tipo];
+  if (f.stock === false && f.precio !== null) partes.push('agotado');
+  return partes.map(escapar).join(' · ');
+}
+
 const COLUMNAS_SELLADO = {
   comparativo: {
-    columnas: [['nombre', 'Producto'], ['precio', 'La Ira'], ['market', 'Market'], ['diferencia', 'Dif.'], ['nTiendas', 'Tiendas']],
-    fila: (f, i) => `<tr data-i="${i}" class="${escapar(f.estado ?? '')}"><td>${escapar(f.nombre)}</td><td>${pesos(f.precio)}</td>
-      <td>${pesos(f.market)}</td><td>${porcentaje(f.diferencia)}</td><td>${escapar(f.nTiendas ?? '—')}</td></tr>`,
+    columnas: [['nombre', 'Producto'], ['precio', 'La Ira'], ['market', 'Market'], ['diferencia', 'Dif.'], ['nTiendas', 'Tiendas'], ['sugerido', 'Sugerido']],
+    resumen: (n, total) => `${n} de ${total} productos sellados de La Ira. * = solo una tienda con stock.`,
+    fila: (f, i) => `<tr data-i="${i}" class="${escapar(f.estado ?? '')}">
+      <td>${escapar(f.nombre)}<small>${subtituloSellado(f)}</small></td>
+      <td>${pesos(f.precio)}</td>
+      <td>${celdaMarket(f)}</td>
+      <td>${porcentaje(f.diferencia)}</td>
+      <td>${escapar(f.nTiendas)}</td>
+      <td>${pesos(f.sugerido)}</td>
+    </tr>`,
   },
   brechas: {
-    columnas: [['nombre', 'Producto'], ['market', 'Market'], ['conStock', 'Tiendas con stock']],
-    fila: (f, i) => `<tr data-i="${i}"><td>${escapar(f.nombre)}</td><td>${pesos(f.market)}</td><td>${escapar(f.conStock ?? '—')}</td></tr>`,
+    columnas: [['nombre', 'Producto'], ['market', 'Market'], ['conStock', 'Tiendas con stock'], ['sugerido', 'Sugerido']],
+    resumen: (n) => `${n} productos sellados con stock en otras tiendas que La Ira no tiene con stock. * = solo una tienda con stock.`,
+    fila: (f, i) => `<tr data-i="${i}">
+      <td>${escapar(f.nombre)}${f.reciente ? '<span class="etiqueta reciente">reciente</span>' : ''}<small>${subtituloSellado(f)}</small></td>
+      <td>${celdaMarket(f)}</td>
+      <td>${escapar(f.conStock)}</td>
+      <td>${pesos(f.sugerido)}</td>
+    </tr>`,
   },
 };
+
+function filtrarSellado(filas) {
+  const formato = $('#formato-sellado').value;
+  const tipo = $('#tipo').value;
+  const texto = $('#buscar').value.trim().toLowerCase();
+  return filas.filter((f) => (!formato || f.formato === formato)
+    && (!tipo || f.tipo === tipo)
+    && (!texto || f.nombre.toLowerCase().includes(texto)));
+}
 
 async function renderSellado(tipo) {
   const propio = ++turno;
@@ -210,11 +245,11 @@ async function renderSellado(tipo) {
     mostrarVacio(SELLADO_PRONTO);
     return;
   }
-  const visibles = ordenar(filas, estado.ordenes[estado.vista]);
-  const { columnas, fila } = COLUMNAS_SELLADO[tipo];
-  $('#resumen').textContent = `${visibles.length} productos sellados.`;
+  const visibles = ordenar(filtrarSellado(filas), estado.ordenes[estado.vista]);
+  const { columnas, fila, resumen } = COLUMNAS_SELLADO[tipo];
+  $('#resumen').textContent = resumen(visibles.length, filas.length);
   $('#tabla').innerHTML = tabla(columnas, visibles, fila);
-  conectar(visibles, null);
+  conectar(visibles, abrirDetalleSellado);
 }
 
 async function renderSinEmparejar() {
@@ -250,20 +285,38 @@ function enlaceTienda(url, nombre) {
   return esWeb(url) ? `<a href="${escapar(url)}" target="_blank" rel="noopener">${escapar(nombre)}</a>` : escapar(nombre);
 }
 
-async function abrirDetalle(f) {
-  const series = await cargar(`series-${f.formato}.json`);
+function precioEnTienda(t) {
+  if (t.ambiguo) return 'varios precios';
+  return t.atipico ? `${pesos(t.precio)} <span class="etiqueta">fuera de rango</span>` : pesos(t.precio);
+}
+
+function mostrarDetalle(f, { sub, tienda, imagen, pie }) {
   const tiendas = [...f.tiendas].sort((a, b) => (a.precio ?? Number.MAX_SAFE_INTEGER) - (b.precio ?? Number.MAX_SAFE_INTEGER));
   $('#detalle-contenido').innerHTML = `
-    ${esWeb(f.imagen) ? `<img src="${escapar(f.imagen)}" alt="" loading="lazy">` : ''}
+    ${esWeb(imagen) ? `<img src="${escapar(imagen)}" alt="" loading="lazy">` : ''}
     <h2>${escapar(f.nombre)}</h2>
-    <p class="nota">${subtitulo(f)}</p>
+    <p class="nota">${sub}</p>
     <p>Market: <strong>${celdaMarket(f)}</strong> · Sugerido: <strong>${pesos(f.sugerido)}</strong>${vacio(f.min) || vacio(f.max) ? '' : ` · Rango: <strong>${pesos(f.min)} – ${pesos(f.max)}</strong>`}</p>
     <table><thead><tr><th>Tienda</th><th>Precio</th><th>Stock</th></tr></thead><tbody>
-      ${tiendas.map((t) => `<tr><td>${enlaceTienda(t.url, nombreTienda(t.tienda))}</td>
-        <td>${t.ambiguo ? 'varios precios' : pesos(t.precio)}</td><td>${t.stock ? 'sí' : 'no'}</td></tr>`).join('')}
+      ${tiendas.map((t) => `<tr><td>${enlaceTienda(t.url, tienda(t.tienda))}</td>
+        <td>${precioEnTienda(t)}</td><td>${t.stock ? 'sí' : 'no'}</td></tr>`).join('')}
     </tbody></table>
-    ${grafico(series[f.clave])}`;
+    ${pie}`;
   $('#detalle').showModal();
+}
+
+async function abrirDetalle(f) {
+  const series = await cargar(`series-${f.formato}.json`);
+  mostrarDetalle(f, { sub: subtitulo(f), tienda: nombreTienda, imagen: f.imagen, pie: grafico(series[f.clave]) });
+}
+
+async function abrirDetalleSellado(f) {
+  mostrarDetalle(f, {
+    sub: subtituloSellado(f),
+    tienda: nombreTiendaSellado,
+    imagen: null,
+    pie: '<p class="nota">El sellado aún no guarda historial de precios.</p>',
+  });
 }
 
 function renderPie() {
@@ -272,6 +325,12 @@ function renderPie() {
     const viejo = t.reutilizado ? ` <em>(datos del ${t.ultimaLectura ? new Date(t.ultimaLectura).toLocaleDateString('es-CL') : '—'})</em>` : '';
     return `<li>${enlaceTienda(t.url, t.nombre)}: ${t.listados} (${t.conStock} con stock)${viejo}</li>`;
   }).join('');
+  const sellado = meta.sellado?.tiendas ?? [];
+  const reutilizadas = sellado.filter((t) => t.reutilizado).length;
+  $('#pie-sellado').textContent = sellado.length
+    ? `Sellado: ${sellado.length} tiendas${reutilizadas ? ` (${reutilizadas} con datos anteriores)` : ''}.`
+    : '';
+  $('#pie-sellado').hidden = !sellado.length;
 }
 
 function marcarMenu() {
@@ -288,6 +347,10 @@ function mostrarEncabezado(vista) {
   $('#descripcion').textContent = vista.descripcion;
   document.title = `${vista.titulo} · MyL Market`;
   $('#filtros').hidden = !vista.filtros.length;
+  if (vista.buscar) {
+    $('#buscar').placeholder = vista.buscar;
+    $('#buscar').setAttribute('aria-label', vista.buscar.replace('…', ''));
+  }
   FILTROS.forEach((id) => { $(`#${id}`).hidden = !vista.filtros.includes(id); });
 }
 
@@ -349,6 +412,8 @@ function conectarFiltros() {
   });
   $('#edicion').addEventListener('change', refrescar);
   $('#estado').addEventListener('change', refrescar);
+  $('#formato-sellado').addEventListener('change', refrescar);
+  $('#tipo').addEventListener('change', refrescar);
   $('#buscar').addEventListener('input', refrescar);
 }
 
