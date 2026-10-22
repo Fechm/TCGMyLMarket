@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { parsearListado } from '../src/lectores/jumpseller.mjs';
 import { leer as leerShopify } from '../src/lectores/shopify.mjs';
 import { leer as leerWoo } from '../src/lectores/woocommerce.mjs';
+import { leer as leerWoodmart } from '../src/lectores/woocommerce-html.mjs';
 
 const fixture = (nombre) => readFileSync(new URL(`./fixtures/${nombre}`, import.meta.url), 'utf8');
 
@@ -46,3 +47,15 @@ for (const [tienda, url, minimo] of [['mylserena', 'https://mylserena.cl', 25], 
     assert.ok(productos.some((p) => p.stock), 'ningún producto con stock en la página 1');
   });
 }
+
+test('woocommerce-html real: elreinodelosduelos', async () => {
+  const cliente = { texto: async () => fixture('elreinodelosduelos.html') };
+  const listados = await leerWoodmart({
+    id: 'reinodelosduelos', url: 'https://elreinodelosduelos.cl',
+    categorias: [{ ruta: 'categoria-producto/mitos-y-leyendas', formato: null }],
+  }, cliente);
+  assert.ok(listados.length >= 100, `solo ${listados.length}`);
+  verificar(listados, 'https://elreinodelosduelos.cl/producto/');
+  assert.ok(listados.some((l) => l.stock), 'ningún producto con stock');
+  assert.ok(listados.some((l) => !l.stock), 'ningún producto agotado');
+});
