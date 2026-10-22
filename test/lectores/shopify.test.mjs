@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { PRECIO_MAXIMO, leer } from '../../src/lectores/shopify.mjs';
 
 const config = {
@@ -63,4 +64,41 @@ test('descarta imagen con esquemas distintos de http y https', async () => {
   };
   const [listado] = await leer({ ...config, url: 'javascript:alert(1)//' }, cliente);
   assert.deepEqual([listado.url, listado.imagen], [null, null]);
+});
+
+test('expandirVariantes genera un listado por variante con su precio y stock', async () => {
+  const { products } = JSON.parse(readFileSync(new URL('../fixtures/devastation-sellado.json', import.meta.url), 'utf8'));
+  const cliente = { json: async () => ({ datos: { products } }) };
+  const listados = await leer({ ...config, coleccion: 'productos-mitos-y-leyendas', expandirVariantes: true }, cliente);
+  assert.equal(listados.length, 11);
+  assert.deepEqual(listados[0], {
+    tienda: 'devastation', id: '8509119758507:45573249892523', nombre: 'Kit de Batalla Dominios de Ra, Seth - 1 KIT', precio: 25000, stock: true,
+    url: 'https://storedevastation.com/products/kit-de-batalla-helenica-afrodita-copia',
+    imagen: products[0].images[0].src, pistas: ['tag:Almacen CHILE', 'tag:SEALED MYL'], formato: null,
+  });
+  assert.deepEqual([listados[1].nombre, listados[1].precio, listados[1].stock], ['Kit de Batalla Dominios de Ra, Seth - 3 KIT', 0, false]);
+  const racial = listados.filter((l) => l.id.startsWith('8051085639851:'));
+  assert.equal(racial.length, 9);
+  assert.deepEqual(racial.slice(0, 2).map((l) => [l.nombre, l.precio, l.stock]), [
+    ['KIT Racial Imperio 2024 - SOMBRA', 0, false],
+    ['KIT Racial Imperio 2024 - SACERDOTE', 17000, true],
+  ]);
+});
+
+test('expandirVariantes deja solo el título con Default Title y respeta el máximo', async () => {
+  const cliente = {
+    json: async () => ({
+      datos: {
+        products: [{
+          id: 3, title: 'Display', handle: 'display', tags: [],
+          variants: [{ id: 30, title: 'Default Title', available: true, price: '59000' }, { id: 31, title: '3 DISPLAY', available: true, price: '2000000' }],
+        }],
+      },
+    }),
+  };
+  const listados = await leer({ ...config, expandirVariantes: true }, cliente);
+  assert.deepEqual(listados.map((l) => [l.id, l.nombre, l.precio, l.stock]), [
+    ['3:30', 'Display', 59000, true],
+    ['3:31', 'Display - 3 DISPLAY', 0, false],
+  ]);
 });
