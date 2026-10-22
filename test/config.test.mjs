@@ -38,3 +38,14 @@ test('cada edición es válida y sus alias calzan con el lector de la tienda', (
 test('hay al menos una edición reciente', () => {
   assert.ok(Object.values(ediciones).some((e) => e.reciente));
 });
+
+test('cada producto sellado tiene id único y una edición conocida del mismo formato', () => {
+  const sellado = leerJson('../config/sellado.json');
+  assert.equal(new Set(sellado.map((p) => p.id)).size, sellado.length);
+  for (const p of sellado) {
+    assert.ok(ediciones[p.edicion], `${p.id}: edición ${p.edicion} no existe`);
+    assert.equal(p.formato, ediciones[p.edicion].formato, p.id);
+    assert.ok(p.incluye.length > 0, `${p.id}: incluye vacío`);
+    assert.ok(Array.isArray(p.excluye), p.id);
+  }
+});

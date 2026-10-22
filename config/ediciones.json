@@ -360,5 +360,61 @@
       "mylserena": ["cod:Kit Racial Criaturas 2025", "cod:Kit Racial Caballero 2025", "cod:Kit Racial Campeón 2025", "cod:Kit Racial Kami 2025", "cod:Kit Racial Faerie 2025", "cod:Kit Racial Xian 2025", "cod:Kit Racial Dragón 2025"],
       "pandora": ["cod:Colección Racial PE 2025"]
     }
+  },
+  "vigilantes": {
+    "nombre": "Ángeles y Demonios: Vigilantes",
+    "formato": "imperio"
+  },
+  "kvm-titanes": {
+    "nombre": "Kaiju vs Mecha: Titanes",
+    "formato": "imperio"
+  },
+  "toolkit-imperio-2026": {
+    "nombre": "Toolkit Imperio 2026",
+    "formato": "imperio"
+  },
+  "chile-oculto": {
+    "nombre": "Chile Oculto",
+    "formato": "imperio"
+  },
+  "espada-sagrada-aniversario": {
+    "nombre": "Espada Sagrada Aniversario",
+    "formato": "pb"
+  },
+  "relatos-de-dominios-de-ra": {
+    "nombre": "Relatos de Dominios de Ra",
+    "formato": "pb"
+  },
+  "shogun-5": {
+    "nombre": "Shogun 5: Onna Musha",
+    "formato": "pb"
+  },
+  "toolkit-pb-2026": {
+    "nombre": "Toolkit Primer Bloque 2026",
+    "formato": "pb"
+  },
+  "mazos-pb-2026": {
+    "nombre": "Mazos Preconstruidos Primer Bloque 2026",
+    "formato": "pb"
+  },
+  "toolkit-pe-2026": {
+    "nombre": "Toolkit Primera Era 2026",
+    "formato": "pe"
+  },
+  "lootbox-pe-2025": {
+    "nombre": "Lootbox Primera Era 2025",
+    "formato": "pe"
+  },
+  "leyendas-bloque-furia-2026": {
+    "nombre": "Leyendas Bloque Furia 2026",
+    "formato": "fx"
+  },
+  "relatos-bloque-furia": {
+    "nombre": "Relatos Bloque Furia",
+    "formato": "fx"
+  },
+  "toolkit-fx-2025": {
+    "nombre": "Toolkit Furia Extendido 2025",
+    "formato": "fx"
   }
 }
